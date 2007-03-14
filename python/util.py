@@ -1,4 +1,4 @@
-from NewGraph import *
+from Graph import *
 from grammar import *
 
 def exp2graph(graph, term):

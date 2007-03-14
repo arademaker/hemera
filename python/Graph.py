@@ -1,5 +1,9 @@
 from networkx import *
 
+SIDE =  'side'
+ORDER = 'order'
+LABEL = 'label'
+
 LEFT = 'left'
 RIGHT = 'right'
 DERIVATION = 'derivation'
@@ -44,14 +48,14 @@ class Node:
 	    return []
 
 
-class Edge:
-    def __init__(self, side = None, label=None, order=None):
-        self.side = side
-        self.label = label
-        self.order = order
+# class Edge:
+#     def __init__(self, side = None, label=None, order=None):
+#         self.side = side
+#         self.label = label
+#         self.order = order
 
-    def __str__(self):
-        return "(side=%s, %s)" %(self.side,self.label)
+#     def __str__(self):
+#         return "(side=%s, %s)" %(self.side,self.label)
 
 
 class MyGraph(XDiGraph):
@@ -70,16 +74,18 @@ class MyGraph(XDiGraph):
 
     def add_edge(self, n1, n2, edge):
         try:
-            assert isinstance(n1, Node) and isinstance(edge, Edge)
+            assert isinstance(n1, Node)
             if isinstance(n2, Node):
                 XDiGraph.add_edge(self, n1, n2, edge)
             elif type(n2) == list:
-                for r in n2:
+                for i,r in enumerate(n2):
                     assert isinstance(r, Node)
-                    XDiGraph.add_edge(self, n1, r, edge)
+                    e = edge.copy()
+                    e[ORDER] = i 
+                    XDiGraph.add_edge(self, n1, r, e)
             else:
                 raise TypeError, 'Wrong type!'
         except AssertionError:
-            print 'Error: ', n1, n2, edge
+            print 'Error: ', n1, n2
             raise TypeError, "Wrong type!"
 
