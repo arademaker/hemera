@@ -1,0 +1,30 @@
+
+Pendente
+========
+
+1. Mostrar o sequent inicial antes de limpar os goals.
+
+2. Melhorar parser para casos como "a --> a --> a" e aceitar apenas
+formulas bem formadas, não aceitar partes de formulas, como no caso "a
+-> a" que ele aceita o "a".
+
+
+Distribuição
+============
+
+python setup.py sdist
+
+
+Instalação
+==========
+
+Requer Python 2.4.3 ou superior. Bibliotecas necessárias no diretório lib:
+
+ * networkx
+ * pyparsing
+ * pydot
+
+Para instalar:
+
+python setup.py install
+
