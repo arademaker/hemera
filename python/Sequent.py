@@ -78,9 +78,9 @@ def new_goal(goal, pair, pairs):
     As, Bs = split_goal(goal)
     if pair[1] == LEFT: As.remove(pair[0])
     if pair[1] == RIGHT: Bs.remove(pair[0])
-
     ng.add_child(As, LEFT)
     ng.add_child(Bs, RIGHT)
+
     for p in pairs:
         ng.add_child(p[0], side=p[1])
     return ng

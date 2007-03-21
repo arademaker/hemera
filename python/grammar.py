@@ -10,8 +10,7 @@ tokens = ('ID',
           'RPAR',
           'CMD')
 
-# seria possivel tambem definir os operadores como literais? Qual a
-# vantagem?
+# seria interessante definir os operadores como literais? 
 # literals = '& | ~'
 
 t_IMPLICATION  = r'-->'
@@ -49,6 +48,7 @@ lexer = lex.lex()
 
 """
 lang : CMD SEQUENT 
+     | CMD WFF
      | CMD
 
 WFF : WFF '&' WFF
@@ -69,6 +69,10 @@ SEQUENT : LWFF '|-' LWFF
 
 def p_lang_cmd_sequent(p):
     'lang : CMD sequent'
+    p[0] = (p[1], p[2])
+
+def p_lang_cmd_wff(p):
+    'lang : CMD wff'
     p[0] = (p[1], p[2])
 
 def p_lang_cmd(p):
@@ -130,6 +134,4 @@ def p_error(p):
 
 # Build the parser
 yacc.yacc()
-
-
 

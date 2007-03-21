@@ -17,9 +17,9 @@ def is_atomic(formula):
 
 
 def unify(n1, n2):
-    ''' trying to close the branch '''
+    ' trying to close the branch '
     if is_atomic(n1) and is_atomic(n2):
-        return ( (n1.label == n2.label) and (n1.sign == not n2.sign) )
+        return (n1.label == n2.label)
     else:
         return False
 
@@ -69,10 +69,11 @@ def cost_formulas(goal):
 def new_goal(goal, pair, pairs):
     ng = GRAPH.create_node('|-')
     nlabel = '%s.%s' % (pair[1],pair[0].label)
-    goal.add_child(ng, label=nlabel, side=DERIVATION)
+    goal.add_child(ng, Edge(label=nlabel, side=DERIVATION))
 
-    G = goal.get_childs()
-    ng.add_childs(G)
+    ng.copy_childs_from(goal)
+    ng.remove_child(pair[0])
+
     for p in pairs:
         ng.add_child(p[0], Edge(sign=p[1]))
     return ng
@@ -142,10 +143,13 @@ def proof_steps(n, goals):
 
 def read_goal(exp):
     graph, root = exp2graph(None, exp)
-    goal = root
     if root.label != '|-':
-        goal = graph.create_node("|-")
-        goal.add_child(root, side=RIGHT)
+        goal = graph.create_node('|-')
+        goal.add_child(root, Edge(sign=False))
+    elif root.label == '|-':
+        goal = root
+    else:
+        raise Error
     return (graph, [goal])
 
 

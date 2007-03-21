@@ -7,14 +7,11 @@ DERIVATION = 'derivation'
 
 class Node:
     id = 0
-    def __init__(self, label, sign=None, cost=None, used=None):
+    def __init__(self, label):
 	self.graph = None
 	self.label = label
-        self.cost = cost
         self.id = Node.id
-        self.used = used
         Node.id += 1
-
 
     def __getitem__(self, aname):
         if(aname == "label"):
@@ -27,17 +24,15 @@ class Node:
     def __str__(self):
 	return "Node(%s,%s)" %(self.id,self.label)
 
-
-    def add_child(self, node, side=None, label=None):
-        assert isinstance(node, Node)
+    def add_child(self, node, edge):
+        assert isinstance(node, Node) and isinstance(edge, Edge)
         self.graph.add_node(node)
-        self.graph.add_edge(self, node, Edge(side=side, label=label))
+        self.graph.add_edge(self, node, edge)
 
-
-    def add_childs(self, nodes, side=None, label=None):
+    def add_childs(self, nodes, edge):
         for n in nodes:
-            self.add_child(n, side=side, label=label)
-
+            e = copy(edge)
+            self.add_child(n, e)
 
     def get_childs(self, side=None, sign=None):
         edges = self.get_out_edges(side=side, sign=sign)
@@ -46,17 +41,24 @@ class Node:
         else:
             return []
             
-
     def get_out_edges(self, side=None, sign=None):
         edges = self.graph.out_edges(self)
         if side:
             edges = filter(lambda x : x[2].side == side, edges)
-        elif sign:
+        if sign:
             edges = filter(lambda x : x[2].sign == sign, edges)
         if edges:
             return [(x[1], x[2]) for x in edges]
 	else:
 	    return []
+
+    def copy_childs_from(self, node):
+        A = node.get_out_edges()
+        for (n, e) in A:
+            self.add_child(n, copy(e))
+
+    def remove_child(self, node):
+        self.graph.delete_edge(self, node)
 
 
 class Edge:
@@ -65,7 +67,6 @@ class Edge:
         self.sign = sign
         self.label = label
         self.order = order
-
 
     def __getitem__(self, aname):
         if(aname == "label"):
@@ -78,7 +79,7 @@ class Edge:
             raise AttributeError, aname
 
     def __str__(self):
-        return "(side=%s, %s)" %(self.side,self.label)
+        return "(%s, %s, %s, %s)" %(self.side,self.order,self.sign,self.label)
 
 
 class MyGraph(XDiGraph):
@@ -93,22 +94,50 @@ class MyGraph(XDiGraph):
 	    n.graph = self
 	    XDiGraph.add_node(self, n)
 	except AssertionError:
-	    raise TypeError, "Object is not a Node instance"
+            print n
+	    raise TypeError, 'Object is not a Node instance'
 
     def add_edge(self, n1, n2, edge):
         try:
-            assert isinstance(n1, Node) and isinstance(edge, Edge)
-            if isinstance(n2, Node):
-                XDiGraph.add_edge(self, n1, n2, edge)
-            elif type(n2) == list:
-                for i,r in enumerate(n2):
-                    assert isinstance(r, Node)
-                    e = copy(edge)
-                    e.order = i 
-                    XDiGraph.add_edge(self, n1, r, e)
-            else:
-                raise TypeError, 'Wrong type!'
+            assert isinstance(edge, Edge)
+            self.add_node(n1)
+            self.add_node(n2)
+            XDiGraph.add_edge(self, n1, n2, edge)
         except AssertionError:
-            print 'Error: ', n1, n2
             raise TypeError, "Wrong type!"
+
+    def add_edges(self, n1, lst, edge):
+        if type(lst) != list:
+            lst = [lst]
+        try:
+            for i, r in enumerate(lst):
+                assert isinstance(r, Node)
+                e = copy(edge)
+                e.order = i
+                self.add_edge(n1, r, e)
+        except AssertionError:
+            raise TypeError, 'Wrong type!'
+
+
+
+def teste():
+    g = MyGraph()
+    n0 = Node('|-')
+
+    n = Node('a')
+
+    g.add_edges(n0, [Node('-->')], Edge(side=LEFT))
+    n0.add_child(n, Edge(side=LEFT))
+    n0.add_child(Node('b'), Edge(side=RIGHT))
+
+    n1 = g.create_node('|-')
+    n1.copy_childs_from(n0)
+
+    write_dot(g)
+
+    n0.remove_child(n)
+    n1.remove_child(Node('aa'))
+
+    write_dot(g)
+
 
