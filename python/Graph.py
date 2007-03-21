@@ -37,7 +37,7 @@ class Node:
     def get_childs(self, side=None, sign=None):
         edges = self.get_out_edges(side=side, sign=sign)
         if edges:
-            return [x[1] for x in edges]
+            return [x[0] for x in edges]
         else:
             return []
             
@@ -48,13 +48,15 @@ class Node:
         if sign:
             edges = filter(lambda x : x[2].sign == sign, edges)
         if edges:
+            edges.sort(key = lambda x: x[2], cmp = lambda x,y : cmp(x.order,y.order))
             return [(x[1], x[2]) for x in edges]
 	else:
 	    return []
 
     def copy_childs_from(self, node):
         A = node.get_out_edges()
-        for (n, e) in A:
+        f = lambda e: e[1].side != DERIVATION
+        for (n, e) in filter(f, A):
             self.add_child(n, copy(e))
 
     def remove_child(self, node):
@@ -62,11 +64,10 @@ class Node:
 
 
 class Edge:
-    def __init__(self, side = None, label=None, order=None, sign=None):
+    def __init__(self, side = None, label=None, sign=None):
         self.side = side
         self.sign = sign
         self.label = label
-        self.order = order
 
     def __getitem__(self, aname):
         if(aname == "label"):
@@ -83,18 +84,25 @@ class Edge:
 
 
 class MyGraph(XDiGraph):
+    def __init__(self):
+        XDiGraph.__init__(self)
+        self._edgenum = 0
+
     def create_node(self, label):
         n = Node(label)
         self.add_node(n)
         return n
 
+    def _nedge(self):
+        self._edgenum = self._edgenum + 1
+        return self._edgenum
+    
     def add_node(self, n):
 	try:
 	    assert isinstance(n, Node)
 	    n.graph = self
 	    XDiGraph.add_node(self, n)
 	except AssertionError:
-            print n
 	    raise TypeError, 'Object is not a Node instance'
 
     def add_edge(self, n1, n2, edge):
@@ -102,21 +110,16 @@ class MyGraph(XDiGraph):
             assert isinstance(edge, Edge)
             self.add_node(n1)
             self.add_node(n2)
-            XDiGraph.add_edge(self, n1, n2, edge)
+            edge.order = self._nedge()
+            XDiGraph.add_edge(self, n1, n2, copy(edge))
         except AssertionError:
             raise TypeError, "Wrong type!"
 
     def add_edges(self, n1, lst, edge):
         if type(lst) != list:
             lst = [lst]
-        try:
-            for i, r in enumerate(lst):
-                assert isinstance(r, Node)
-                e = copy(edge)
-                e.order = i
-                self.add_edge(n1, r, e)
-        except AssertionError:
-            raise TypeError, 'Wrong type!'
+        for r in lst:
+            self.add_edge(n1, r, edge)
 
 
 
@@ -139,5 +142,3 @@ def teste():
     n1.remove_child(Node('aa'))
 
     write_dot(g)
-
-

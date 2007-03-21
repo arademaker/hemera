@@ -67,6 +67,7 @@ def cost_formulas(goal):
 
 
 def new_goal(goal, pair, pairs):
+    global GRAPH
     ng = GRAPH.create_node('|-')
     nlabel = '%s.%s' % (pair[1],pair[0].label)
     goal.add_child(ng, Edge(label=nlabel, side=DERIVATION))
@@ -117,12 +118,12 @@ def reduce_goal(goal):
 def proof_step(goals):
     try:
         # escolha do proximo goal a ser tentado, confirmar se lista
-        # nao vazia
+        # nao vazia!
         assert goals
         goal = goals.pop()
         pair, new_goals = reduce_goal(goal)
         sucess, goals = insert_goals(goals, new_goals)
-        print_step(pair, goals, sucess)
+        print_step(goal, sucess)
     except (IndexError, AssertionError):
         raise NoMoreGoals
     else:
@@ -146,18 +147,10 @@ def read_goal(exp):
     if root.label != '|-':
         goal = graph.create_node('|-')
         goal.add_child(root, Edge(sign=False))
-    elif root.label == '|-':
-        goal = root
     else:
         raise Error
     return (graph, [goal])
 
-
-def string_from_side(s):
-    if   s == LEFT: return 'Left'
-    elif s == RIGHT: return 'Right'
-    else: raise Exception
-    
 
 def string_from_node(n):
     cl = n.get_childs()
@@ -182,12 +175,18 @@ def string_from_nodes(As):
 
 
 def string_from_goal(goal):
-    As, Bs = split_goal(goal)
-    return string_from_nodes(As) + ' |- ' + string_from_nodes(Bs)
+    edges = goal.get_out_edges()
+    s = []
+    f = lambda e: e[1].side != DERIVATION
+    for (n,e) in filter(f, edges):
+        str = '%s (%s)' %(e.sign, string_from_node(n))
+        s.append(str)
+    return ' |- ' + ', '.join(s) 
 
 
-def print_step(pair, goals, sucess):
-    print 'Last rule: %s-%s' %(pair[0].label, string_from_side(pair[1]))
+def print_step(last_goal, sucess):
+    e = last_goal.get_out_edges(side=DERIVATION)[0]
+    print 'Last rule: %s' %(e[1].label)
     print 'Sucess: ', string_from_nodes(sucess)
 
 
@@ -199,7 +198,6 @@ def print_goals(goals):
         print 'Goals: '
         for g in goals:
             print string_from_goal(g)
-
 
 
 def set_goals(goals):
