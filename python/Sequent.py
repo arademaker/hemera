@@ -72,17 +72,14 @@ def cost_formulas(goal):
 
 def new_goal(goal, pair, pairs):
     ng = GRAPH.create_node('|-')
-    s = '%s/%s' % (pair[0].label, string_from_side(pair[1]))
-    goal.add_child(ng, label=s, side=DERIVATION)
+    s = '%s-%s' % (pair[0].label, string_from_side(pair[1]))
+    goal.add_child(ng, Edge(label=s, side=DERIVATION))
 
-    As, Bs = split_goal(goal)
-    if pair[1] == LEFT: As.remove(pair[0])
-    if pair[1] == RIGHT: Bs.remove(pair[0])
-    ng.add_child(As, LEFT)
-    ng.add_child(Bs, RIGHT)
+    ng.copy_childs_from(goal)
+    ng.remove_child(pair[0])
 
     for p in pairs:
-        ng.add_child(p[0], side=p[1])
+        ng.add_child(p[0], Edge(side=p[1]))
     return ng
 
 
@@ -165,7 +162,7 @@ def read_goal(exp):
     goal = root
     if root.label != '|-':
         goal = graph.create_node("|-")
-        goal.add_child(root, side=RIGHT)
+        goal.add_child(root, Edge(side=RIGHT))
     return (graph, [goal])
 
 
@@ -254,8 +251,12 @@ def eval(input):
         proof = XDiGraph()
         proof = print_proof(proof, ROOT)
         write_dot(proof)
+        # f = open(input[1], 'wr')
+        # f.write( write_dot(proof) )
+        # print 'Arquivo %s gerado.' % input[1]
 
 
+print ISSUE
 while 1:
     try:
         s = raw_input('(prover)> ')

@@ -6,12 +6,9 @@ RIGHT = 'right'
 DERIVATION = 'derivation'
 
 class Node:
-    id = 0
     def __init__(self, label):
 	self.graph = None
 	self.label = label
-        self.id = Node.id
-        Node.id += 1
 
     def __getitem__(self, aname):
         if(aname == "label"):
@@ -22,7 +19,7 @@ class Node:
             raise AttributeError, aname
 
     def __str__(self):
-	return "Node(%s,%s)" %(self.id,self.label)
+	return self.label
 
     def add_child(self, node, edge):
         assert isinstance(node, Node) and isinstance(edge, Edge)
@@ -122,23 +119,21 @@ class MyGraph(XDiGraph):
             self.add_edge(n1, r, edge)
 
 
-
 def teste():
     g = MyGraph()
     n0 = Node('|-')
+    nr = Node('a')
+    n1 = Node('-->')	
 
-    n = Node('a')
+    g.add_edges(n0, [n1], Edge(side=LEFT))
+    n1.add_child(nr, Edge(side=LEFT))
+    n1.add_child(Node('b'), Edge(side=RIGHT))
 
-    g.add_edges(n0, [Node('-->')], Edge(side=LEFT))
-    n0.add_child(n, Edge(side=LEFT))
-    n0.add_child(Node('b'), Edge(side=RIGHT))
-
-    n1 = g.create_node('|-')
+    n = g.create_node('|-')
     n1.copy_childs_from(n0)
-
     write_dot(g)
 
-    n0.remove_child(n)
+    n0.remove_child(nr)
     n1.remove_child(Node('aa'))
 
     write_dot(g)

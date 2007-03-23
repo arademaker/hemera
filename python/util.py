@@ -1,6 +1,20 @@
 from Graph import *
 from grammar import *
 
+ISSUE = '''
+Provador de Teoremas 0.01
+TecMF - 2007
+
+Authors: Alexandre Rademaker, Edward Hermann
+
+Calculus: 
+ - Sequent Calculus
+ - Tableaux
+
+
+'''
+
+
 def exp2graph(graph, term):
     "recebe um  termo resultado do parser da formula e retorna (grafo, raiz)"
     if graph == None: 

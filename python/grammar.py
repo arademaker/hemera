@@ -36,6 +36,11 @@ def t_ID(t):
     t.type = reserved.get(t.value,'ID') # Check for reserved words
     return t
 
+# def t_FILENAME(t):
+#     r'[a-zA-Z_0-9]*'
+#     t.type = reserved.get(t.value,'ID') # Check for reserved words
+#     return t
+
 # Error handling rule
 def t_error(t):
     print "Illegal character '%s'" % t.value[0]
@@ -49,6 +54,7 @@ lexer = lex.lex()
 """
 lang : CMD SEQUENT 
      | CMD WFF
+     | CMD ID
      | CMD
 
 WFF : WFF '&' WFF
@@ -74,6 +80,7 @@ def p_lang_cmd_sequent(p):
 def p_lang_cmd_wff(p):
     'lang : CMD wff'
     p[0] = (p[1], p[2])
+
 
 def p_lang_cmd(p):
     'lang : CMD'
