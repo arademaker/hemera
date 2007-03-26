@@ -2,11 +2,20 @@
 import sys
 from code import InteractiveConsole
 
+def eval(line):
+    print '--> ', line
+
 class FileCacher:
     "Cache the stdout text so we can analyze it before returning it"
-    def __init__(self): self.reset()
-    def reset(self): self.out = []
-    def write(self,line): self.out.append(line)
+    def __init__(self): 
+        self.reset()
+
+    def reset(self): 
+        self.out = []
+
+    def write(self,line): 
+        self.out.append(line)
+
     def flush(self):
         output = '\n'.join(self.out)
         self.reset()
@@ -20,13 +29,17 @@ class Shell(InteractiveConsole):
         InteractiveConsole.__init__(self)
         return
 
-    def get_output(self): sys.stdout = self.cache
-    def return_output(self): sys.stdout = self.stdout
+    def get_output(self): 
+        sys.stdout = self.cache
+
+    def return_output(self): 
+        sys.stdout = self.stdout
 
     def push(self,line):
         self.get_output()
         # you can filter input here by doing something like
         # line = filter(line)
+        eval(line)
         InteractiveConsole.push(self,line)
         self.return_output()
         output = self.cache.flush()
