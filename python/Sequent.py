@@ -115,6 +115,8 @@ def reduce_goal(goal):
     elif f_pair[1] == RIGHT and f_pair[0].label == '|':   pairsl = [[(a,RIGHT),(b,RIGHT)]]
     elif f_pair[1] == LEFT  and f_pair[0].label == '~':   pairsl = [[(a,RIGHT)]]
     elif f_pair[1] == RIGHT and f_pair[0].label == '~':   pairsl = [[(a,LEFT)]]
+    else:
+        raise REDUCE
     return f_pair, new_goals(goal, f_pair, pairsl)
 
 
@@ -122,14 +124,16 @@ def proof_step(goals):
     try:
         # escolha do proximo goal a ser tentado, confirmar se lista
         # nao vazia
-        assert goals
-        goal = goals.pop()
+        goal = goals[0]
         pair, new_goals = reduce_goal(goal)
         sucess, goals = insert_goals(goals, new_goals)
         print_step(pair, goals, sucess)
-    except (IndexError, AssertionError):
+    except (IndexError, AttributeError):
         raise NoMoreGoals
+    except (REDUCE):
+        raise REDUCE
     else:
+        goals.remove(goal)
         return goals
 
 
@@ -145,16 +149,16 @@ def print_step(pair, goals, sucess):
 
 
 def proof_steps(n, goals):
-    if goals == [] or goals == None:
-        return []
     if n == 0:
         return goals
     else:
         try:
-            goals = proof_step(goals)
-            return proof_steps(n-1, goals)
+            return proof_steps(n-1, proof_step(goals))
         except REDUCE:
-            print "==> No proof rules applicable"
+            print "No proof rules applicable."
+            return goals
+        except NoMoreGoals:
+            return goals
 
 
 def read_goal(exp):
@@ -194,13 +198,11 @@ def string_from_goal(goal):
 
 
 def print_goals(goals):
-    s = ''
     if (goals == [] or goals == None):
-        print "No more goals: proof finished"
+        print "No more goals."
     else:
-        print 'Goals: '
-        for g in goals:
-            print string_from_goal(g)
+        for n, g in enumerate(goals):
+            print 'Goal #%s: %s' %(n, string_from_goal(g))
 
 
 def set_goals(goals):
@@ -210,7 +212,7 @@ def set_goals(goals):
 
 
 def step():
-    set_goals( proof_step(GOALS) )
+    set_goals( proof_steps(1, GOALS) )
 
 def steps(n):
     set_goals( proof_steps(max(int(n),0), GOALS) )
@@ -259,7 +261,7 @@ def eval(input):
 print ISSUE
 while 1:
     try:
-        s = raw_input('(prover)> ')
+        s = raw_input('(sequent prover)> ')
         if not s: 
             continue
         else:
@@ -269,6 +271,3 @@ while 1:
         break
     except NoMoreGoals:
         print 'No more goals.'
-    except REDUCE:
-        print 'No rule aplicable.'
-
