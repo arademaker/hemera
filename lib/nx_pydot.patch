@@ -1,0 +1,15 @@
+77,78c77
+<             # graph.add_node(pydot.Node(str(v)))
+<             graph.add_node(pydot.Node(id(v), label=str(v)))
+---
+>             graph.add_node(pydot.Node(str(v)))
+82,83c81
+<                 # graph.add_edge(pydot.Edge(str(u),str(v)))
+< 		graph.add_edge(pydot.Edge(id(u),id(v)))
+---
+>                 graph.add_edge(pydot.Edge(str(u),str(v)))
+86,87c84
+<                 # graph.add_edge(pydot.Edge(str(u),str(v),label=str(x)))
+<                 graph.add_edge(pydot.Edge(id(u),id(v),label=str(x)))
+---
+>                 graph.add_edge(pydot.Edge(str(u),str(v),label=str(x)))

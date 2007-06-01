@@ -16,8 +16,8 @@ class Node:
         for n in nodes:
             self.add_child(n, edge)
 
-    def get_childs(self, func):
-        edges = self.get_out_edges(f_filter=func)
+    def get_childs(self, f):
+        edges = self.get_out_edges(func=f)
         if edges:
             return [x[0] for x in edges]
         else:

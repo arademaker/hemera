@@ -1,0 +1,43 @@
+
+fmod PATH is
+  pr QID .
+  
+  sorts Node Edge Path .
+  subsort Qid < Node .
+  
+  op _->_[_] : Node Node Store -> Edge [ctor prec 40].
+
+  var N N' : Node .
+  var E    : Edge .
+  var P Q  : Path .
+  
+  op source : Path -> Node .
+  eq source(N -> N' , P) = N .
+  eq source(N -> N') = N .
+
+  op target : Path -> Node .
+  eq target(P , N -> N') = N' .
+  eq target(N -> N') = N' .
+
+  cmb P , Q : Path if target(P) = source(Q) .
+
+endfm
+
+fmod GRAPH is
+  pr PATH .
+
+  sort Graph .
+  subsort Edge < Graph .
+  
+  op nil : -> Graph [ctor].
+  op _;_ : Graph Graph -> Graph [ctor assoc comm id: nil].
+
+  var M N O : Node .
+  var G  : Graph .
+  
+  op reachable : Graph Node Node -> Bool .
+  eq reachable(M -> N ; G, M, N) = true .
+  ceq reachable(M -> O ; G, M, N) = true
+   if reachable(G, O, N) = true .
+  eq reachable(G, M, N) = false [owise].
+endfm
