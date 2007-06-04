@@ -1,9 +1,8 @@
-from Graph import *
 from util import *
 
 ROOT = None
 GOALS = []
-GRAPH = MyGraph()
+GRAPH = None
 
 class NoMoreGoals(Exception):
     pass
@@ -25,8 +24,8 @@ def unify(n1, n2):
 
 
 def split_goal(goal):
-    Gamma = goal.get_childs(side=LEFT)
-    Delta = goal.get_childs(side=RIGHT)
+    Gamma = goal.get_childs(lambda x: x.side==Edge.LEFT)
+    Delta = goal.get_childs(lambda x: x.side==Edge.RIGHT)
     return (Gamma, Delta)
 
 
@@ -51,29 +50,29 @@ def insert_goals(goals, new_goals):
 
 
 def cost(side, conn):
-    if   side==LEFT  and conn == '&':   return 1
-    elif side==RIGHT and conn == '|':   return 1
-    elif side==RIGHT and conn == '-->': return 1
-    elif side==RIGHT and conn == '&':   return 2
-    elif side==LEFT  and conn == '|':   return 2
-    elif side==LEFT  and conn == '-->': return 2
+    if   side==Edge.LEFT  and conn == '&':   return 1
+    elif side==Edge.RIGHT and conn == '|':   return 1
+    elif side==Edge.RIGHT and conn == '-->': return 1
+    elif side==Edge.RIGHT and conn == '&':   return 2
+    elif side==Edge.LEFT  and conn == '|':   return 2
+    elif side==Edge.LEFT  and conn == '-->': return 2
     elif conn == '~':   return 1
     else: return 4
 
 
 def cost_formulas(goal):
     lst = []
-    for x in goal.get_childs(side=LEFT):
-        lst.append( (x, LEFT, cost(LEFT, x.label)) )
-    for x in goal.get_childs(side=RIGHT):
-        lst.append( (x, RIGHT, cost(RIGHT, x.label)) )
+    for x in goal.get_childs(lambda x: x.side==Edge.LEFT):
+        lst.append( (x, Edge.LEFT, cost(Edge.LEFT, x.label)) )
+    for x in goal.get_childs(lambda x: x.side==Edge.RIGHT):
+        lst.append( (x, Edge.RIGHT, cost(Edge.RIGHT, x.label)) )
     return lst
 
 
 def new_goal(goal, pair, pairs):
     ng = GRAPH.create_node('|-')
     s = '%s-%s' % (pair[0].label, string_from_side(pair[1]))
-    goal.add_child(ng, Edge(label=s, side=DERIVATION))
+    goal.add_child(ng, Edge(label=s, type=DERIVATION))
 
     ng.copy_childs_from(goal)
     ng.remove_child(pair[0])
@@ -98,8 +97,8 @@ def reduce_goal(goal):
     lst.sort(key = lambda x: x[2], cmp = lambda x,y : cmp(x,y))
     f_pair = lst.pop(0)
 
-    a = f_pair[0].get_childs(side=LEFT)
-    b = f_pair[0].get_childs(side=RIGHT)
+    a = f_pair[0].get_childs(lambda x: x.side==Edge.LEFT)
+    b = f_pair[0].get_childs(lambda x: x.side==Edge.RIGHT)
     if len(a) == 1 and len(b) == 0:
         a = a[0]
     elif len(a) == len(b) == 1:
@@ -107,14 +106,14 @@ def reduce_goal(goal):
     else:
         raise REDUCE
 
-    if   f_pair[1] == LEFT  and f_pair[0].label == '-->': pairsl = [[(a,RIGHT)],[(b,LEFT)]]
-    elif f_pair[1] == RIGHT and f_pair[0].label == '-->': pairsl = [[(a,LEFT),(b,RIGHT)]]
-    elif f_pair[1] == LEFT  and f_pair[0].label == '&':   pairsl = [[(a,LEFT),(b,LEFT)]]
-    elif f_pair[1] == RIGHT and f_pair[0].label == '&':   pairsl = [[(a,RIGHT)],[(b,RIGHT)]]
-    elif f_pair[1] == LEFT  and f_pair[0].label == '|':   pairsl = [[(a,LEFT)],[(b,LEFT)]]
-    elif f_pair[1] == RIGHT and f_pair[0].label == '|':   pairsl = [[(a,RIGHT),(b,RIGHT)]]
-    elif f_pair[1] == LEFT  and f_pair[0].label == '~':   pairsl = [[(a,RIGHT)]]
-    elif f_pair[1] == RIGHT and f_pair[0].label == '~':   pairsl = [[(a,LEFT)]]
+    if   f_pair[1] == Edge.LEFT  and f_pair[0].label == '-->': pairsl = [[(a,Edge.RIGHT)],[(b,Edge.LEFT)]]
+    elif f_pair[1] == Edge.RIGHT and f_pair[0].label == '-->': pairsl = [[(a,Edge.LEFT),(b,Edge.RIGHT)]]
+    elif f_pair[1] == Edge.LEFT  and f_pair[0].label == '&':   pairsl = [[(a,Edge.LEFT),(b,Edge.LEFT)]]
+    elif f_pair[1] == Edge.RIGHT and f_pair[0].label == '&':   pairsl = [[(a,Edge.RIGHT)],[(b,Edge.RIGHT)]]
+    elif f_pair[1] == Edge.LEFT  and f_pair[0].label == '|':   pairsl = [[(a,Edge.LEFT)],[(b,Edge.LEFT)]]
+    elif f_pair[1] == Edge.RIGHT and f_pair[0].label == '|':   pairsl = [[(a,Edge.RIGHT),(b,Edge.RIGHT)]]
+    elif f_pair[1] == Edge.LEFT  and f_pair[0].label == '~':   pairsl = [[(a,Edge.RIGHT)]]
+    elif f_pair[1] == Edge.RIGHT and f_pair[0].label == '~':   pairsl = [[(a,Edge.LEFT)]]
     else:
         raise REDUCE
     return f_pair, new_goals(goal, f_pair, pairsl)
@@ -123,7 +122,7 @@ def reduce_goal(goal):
 def proof_step(goals):
     try:
         # escolha do proximo goal a ser tentado, confirmar se lista
-        # nao vazia
+        # nao vazia  ATENCAO!! Talvez usar pop(0)
         goal = goals[0]
         pair, new_goals = reduce_goal(goal)
         sucess, goals = insert_goals(goals, new_goals)
@@ -138,8 +137,7 @@ def proof_step(goals):
 
 
 def string_from_side(s):
-    if   s == LEFT: return 'Left'
-    elif s == RIGHT: return 'Right'
+    if   s == Edge.LEFT or s == Edge.RIGHT: return s
     else: raise Exception
     
 
@@ -173,9 +171,9 @@ def read_goal(exp):
 def string_from_node(n):
     cl = n.get_childs()
     if   len(cl) == 2:
-        l = n.get_childs(side=LEFT)[0]
+        l = n.get_childs(lambda x: x.side==Edge.LEFT)[0]
         s1 = string_from_node(l)
-        r = n.get_childs(side=RIGHT)[0]
+        r = n.get_childs(lambda x: x.side==Edge.RIGHT)[0]
         s2 = string_from_node(r)
         return "(%s %s %s)" % (s1, n.label, s2)
     elif len(cl) == 1:
@@ -224,7 +222,7 @@ def run():
 def print_proof(out, goal):
     n1 = string_from_goal(goal)
     out.add_node(n1)
-    childs = goal.get_out_edges(side=DERIVATION)
+    childs = goal.get_out_edges(lambda x: x.type==Edge.DERIVATION)
     for c,edge in childs:
         n2 = string_from_goal(c)
         out.add_edge(n1, n2, edge.label)
@@ -237,6 +235,7 @@ def eval(input):
     if input[0] == 'step': 
         step()
     elif input[0] == 'steps':
+        print input
         print 'Lets try %s times!' % input[1]
         steps(input[1])
     elif input[0] == 'read':

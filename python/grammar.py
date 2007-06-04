@@ -6,6 +6,7 @@ tokens = ('ID',
           'AND',
           'OR',
           'NOT',
+          'NUMBER',
           'LPAR',
           'RPAR',
           'CMD')
@@ -21,6 +22,7 @@ t_NOT          = r'~'
 t_LPAR         = r'\('
 t_RPAR         = r'\)'
 t_ignore       = ' \t\n'
+t_NUMBER       = r'[0-9]+'
 
 literals = ","
 
@@ -81,10 +83,13 @@ def p_lang_cmd_wff(p):
     'lang : CMD wff'
     p[0] = (p[1], p[2])
 
-
 def p_lang_cmd(p):
     'lang : CMD'
     p[0] = (p[1],)
+
+def p_lang_cmd_num(p):
+    'lang : CMD NUMBER'
+    p[0] = (p[1],p[2])
 
 
 def p_wff_sequent_wff(p):
