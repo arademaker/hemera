@@ -72,7 +72,7 @@ def cost_formulas(goal):
 def new_goal(goal, pair, pairs):
     ng = GRAPH.create_node('|-')
     s = '%s-%s' % (pair[0].label, string_from_side(pair[1]))
-    goal.add_child(ng, Edge(label=s, type=DERIVATION))
+    goal.add_child(ng, Edge(label=s, type=Edge.DERIVATION))
 
     ng.copy_childs_from(goal)
     ng.remove_child(pair[0])

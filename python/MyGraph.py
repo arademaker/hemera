@@ -16,7 +16,7 @@ class Node:
         for n in nodes:
             self.add_child(n, edge)
 
-    def get_childs(self, f):
+    def get_childs(self, f=None):
         edges = self.get_out_edges(func=f)
         if edges:
             return [x[0] for x in edges]
@@ -116,10 +116,7 @@ class Graph(object):
 
     def write(self):
         for k in self._data.keys():
-            print "%s: " % k
-            for c in self._data[k]:
-                print "(%s,%s)" % (c[0],c[1]), 
-            print ""
+            print "%s: %s" % (k, [(x[0].__str__(), x[1].__str__()) for x in self._data[k]])
 
 
 def teste():
@@ -146,10 +143,8 @@ def teste1():
     n = Node('a')
     g.add_node(n)
     e = Edge(side=Edge.LEFT)
-    print e['side']
+    print e['side'], e.side
     g.add_edge(n, Node('b'), Edge(side=Edge.LEFT))
     y = n.get_childs(lambda x: x.side==Edge.LEFT)
     print y, y[0], y[0].label
-
-
 
