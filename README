@@ -18,13 +18,12 @@ python setup.py sdist
 Instalação
 ==========
 
-Requer Python 2.4.3 ou superior. Bibliotecas necessárias no diretório lib:
+Requer Python 2.4.3 ou superior. Bibliotecas python necessárias no diretório lib:
 
- * networkx
- * pyparsing
- * pydot
+ * ply 2.3 (ou superior)
+ * pygraphviz (0.34 ou superior)
 
-Para instalar:
+Ambas as bibliotecas são instaladas com o comando:
 
 python setup.py install
 

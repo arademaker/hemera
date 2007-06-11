@@ -2,11 +2,14 @@ from copy import *
 
 class Node:
     def __init__(self, label):
-	self.graph = None
-	self.label = label
+        self.graph = None
+        self.label = label
 
     def __str__(self):
-	return self.label
+        return self.__repr__()
+
+    def __repr__(self):
+        return self.label
 
     def add_child(self, node, edge):
         self.graph.add_node(node)
@@ -35,7 +38,7 @@ class Node:
 
     def copy_childs_from(self, node):
         A = node.get_out_edges()
-        f = lambda e: e[1].type != 'D'
+        f = lambda e: e[1].type != Edge.DERIVATION
         for (n, e) in filter(f, A):
             self.add_child(n, e)
 
@@ -49,6 +52,7 @@ class Edge:
     STRUCT = 'S'
     DERIVATION = 'D'
     FAILURE = 'F'
+
     def __init__(self, type='S', side = None, label=None, sign=None):
         self.type = type   # Strutural, Deduction, Failure 
         self.side = side   # Left, Right
@@ -56,6 +60,9 @@ class Edge:
         self.label = label # connector, proposition, predicate or function name...
 
     def __str__(self):
+        return self.__repr__()
+
+    def __repr__(self):
         return "%s" % (self.__dict__)
 
     def __getitem__(self, name):
@@ -111,8 +118,11 @@ class Graph(object):
 
     def delete_edge(self, n1, n2):
         if self._data.has_key(n1):
-            if n2 in set(self._data[n1]):
-                self._data[n1].remove(n2)
+            for x in self._data[n1]:
+                if n2 == x[0]:
+                    self._data[n1].remove(x)
+        else:
+            print 'nao achei %s' % n1
 
     def write(self):
         for k in self._data.keys():
@@ -121,30 +131,11 @@ class Graph(object):
 
 def teste():
     g = Graph()
-    n0 = Node('|-')
-    nr = Node('a')
-    n1 = Node('-->')	
-
-    g.add_edges(n0, [n1], Edge(side='left'))
-    n1.add_child(nr, Edge(side='left'))
-    n1.add_child(Node('b'), Edge(side='right'))
-
-    n = g.create_node('|-')
-    n1.copy_childs_from(n0)
+    a = Node('a')
+    b = Node('b')
+    g.add_node(a)
+    a.add_child(b, Edge(label=Edge.DERIVATION))
     g.write()
-
-    n0.remove_child(nr)
-    n1.remove_child(Node('aa'))
+    print '---'
+    a.remove_child(b)
     g.write()
-
-
-def teste1():
-    g = Graph()
-    n = Node('a')
-    g.add_node(n)
-    e = Edge(side=Edge.LEFT)
-    print e['side'], e.side
-    g.add_edge(n, Node('b'), Edge(side=Edge.LEFT))
-    y = n.get_childs(lambda x: x.side==Edge.LEFT)
-    print y, y[0], y[0].label
-

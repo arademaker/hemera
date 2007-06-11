@@ -1,4 +1,5 @@
 from util import *
+import pygraphviz as pyg
 
 ROOT = None
 GOALS = []
@@ -220,12 +221,15 @@ def run():
 
 
 def print_proof(out, goal):
+    ''' receive an intance of MyGraph.Graph and produce an instance of pyparsing.AGraph '''
     n1 = string_from_goal(goal)
     out.add_node(n1)
     childs = goal.get_out_edges(lambda x: x.type==Edge.DERIVATION)
     for c,edge in childs:
         n2 = string_from_goal(c)
-        out.add_edge(n1, n2, edge.label)
+        out.add_edge(n1, n2)
+        e = out.get_edge(n1, n2)
+        e.attr['label'] = edge.label
         out = print_proof(out, c)
     return out
 
@@ -249,12 +253,9 @@ def eval(input):
         print 'Bye.'
         sys.exit(0)
     elif input[0] == 'print':
-        proof = XDiGraph()
+        proof = pyg.AGraph()
         proof = print_proof(proof, ROOT)
-        write_dot(proof)
-        # f = open(input[1], 'wr')
-        # f.write( write_dot(proof) )
-        # print 'Arquivo %s gerado.' % input[1]
+        print proof.string()
 
 
 print ISSUE
