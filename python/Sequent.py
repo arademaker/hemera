@@ -221,7 +221,9 @@ def run():
 
 
 def print_proof(out, goal):
-    ''' receive an intance of MyGraph.Graph and produce an instance of pyparsing.AGraph '''
+    ''' 
+    receive an intance of MyGraph.Graph and produce an instance of pyparsing.AGraph 
+    '''
     n1 = string_from_goal(goal)
     out.add_node(n1)
     childs = goal.get_out_edges(lambda x: x.type==Edge.DERIVATION)
