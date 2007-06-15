@@ -1,13 +1,21 @@
 
-(Aa --> (~ Ac & ~ Ab)) & 
-((~ Ac & ~ Ab) --> Aa) & 
-(Ab --> (~ Aa & ~ Ac)) & 
-((~ Aa & ~ Ac) --> Ab) & 
-(Ac --> (~ Aa & ~ Ab)) & 
-((~ Aa & ~ Ab) --> Ac) & 
-(Ba --> (~ Bc & ~ Bb)) & 
-((~ Bc & ~ Bb) --> Ba) & 
-(Bb --> (~ Ba & ~ Bc)) & 
-((~ Ba & ~ Bc) --> Bb) & 
-(Bc --> (~ Ba & ~ Bb)) & 
-((~ Ba & ~ Bb) --> Bc) & (Ca --> (~ Cc & ~ Cb)) & ((~ Cc & ~ Cb) --> Ca) & (Cb --> (~ Ca & ~ Cc)) & ((~ Ca & ~ Cc) --> Cb) & (Cc --> (~ Ca & ~ Cb)) & ((~ Ca & ~ Cb) --> Cc) & (Aa | Ba | Ca) & (Ab | Cb | Bb) & (Ac | Bc | Cc) & (~ Ab & ~ Cb & ~ Cc) |- (Aa | Ab | Ac) & (Ba | Bb | Bc) & (Ca | Cb | Cc)
+spec TEST1 is
+ axiom (Aa --> (~ Ac & ~ Ab)) .
+ axiom ((~ Ac & ~ Ab) --> Aa) .
+ axiom (Ab --> (~ Aa & ~ Ac)) .
+ axiom ((~ Aa & ~ Ac) --> Ab) .
+ axiom (Ac --> (~ Aa & ~ Ab)) .
+ axiom ((~ Aa & ~ Ab) --> Ac) .
+ axiom (Ba --> (~ Bc & ~ Bb)) .
+ axiom ((~ Bc & ~ Bb) --> Ba) .
+ axiom (Bb --> (~ Ba & ~ Bc)) .
+ axiom ((~ Ba & ~ Bc) --> Bb) .
+ axiom (Bc --> (~ Ba & ~ Bb)) .
+ axiom ((~ Ba & ~ Bb) --> Bc) & (Ca --> (~ Cc & ~ Cb)) .
+ axiom ((~ Cc & ~ Cb) --> Ca) & (Cb --> (~ Ca & ~ Cc)) .
+ axiom ((~ Ca & ~ Cc) --> Cb) & (Cc --> (~ Ca & ~ Cb)) .
+ axiom ((~ Ca & ~ Cb) --> Cc) .
+ axiom (Aa | Ba | Ca) & (Ab | Cb | Bb) & (Ac | Bc | Cc) & (~ Ab & ~ Cb & ~ Cc) .
+end
+
+using TEST1 prove (Aa | Ab | Ac) & (Ba | Bb | Bc) & (Ca | Cb | Cc) .

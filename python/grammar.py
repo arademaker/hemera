@@ -11,9 +11,6 @@ tokens = ('ID',
           'RPAR',
           'CMD')
 
-# seria interessante definir os operadores como literais? 
-# literals = '& | ~'
-
 t_IMPLICATION  = r'-->'
 t_SEQUENT      = r'\|-'
 t_AND          = r'&'
