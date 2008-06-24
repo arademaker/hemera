@@ -165,7 +165,7 @@ def read_goal(exp):
     goal = root
     if root.label != '|-':
         goal = graph.create_node("|-")
-        goal.add_child(root, Edge(side=RIGHT))
+        goal.add_child(root, Edge(side=Edge.RIGHT))
     return (graph, [goal])
 
 
@@ -224,20 +224,28 @@ def print_proof(out, goal):
     ''' 
     receive an intance of MyGraph.Graph and produce an instance of pyparsing.AGraph 
     '''
+
     n1 = string_from_goal(goal)
+    n1 = str(n1)
     out.add_node(n1)
     childs = goal.get_out_edges(lambda x: x.type==Edge.DERIVATION)
+
     for c,edge in childs:
         n2 = string_from_goal(c)
+        n2 = str(n2)
         out.add_edge(n1, n2)
         e = out.get_edge(n1, n2)
-        e.attr['label'] = edge.label
+        
+        e.attr['label'] = str(edge.label)
         out = print_proof(out, c)
     return out
 
 
 def eval(input):
     global GRAPH, GOALS, ROOT
+    
+    ret = ''  
+
     if input[0] == 'step': 
         step()
     elif input[0] == 'steps':
@@ -256,20 +264,9 @@ def eval(input):
         sys.exit(0)
     elif input[0] == 'print':
         proof = pyg.AGraph()
-        proof = print_proof(proof, ROOT)
-        print proof.string()
+        print_proof(proof, ROOT)
+        ret = proof.string()
+        print ret
 
-
-print ISSUE
-while 1:
-    try:
-        s = raw_input('(sequent prover)> ')
-        if not s: 
-            continue
-        else:
-            cmd = yacc.parse(s)
-            eval(cmd)
-    except EOFError:
-        break
-    except NoMoreGoals:
-        print 'No more goals.'
+        
+    return ret
