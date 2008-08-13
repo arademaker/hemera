@@ -1,3 +1,8 @@
+##################################################
+# HemeraServiceContainer.py
+#
+##################################################
+
 #!/apps/pydev/bin/python2.4
 # -*- coding: utf-8 -*-
 
@@ -8,8 +13,10 @@ from ZSI.wstools import logging
 from ZSI.ServiceContainer import AsServer
 # Import the generated Server Object
 from HemeraService_services_server import HemeraService
-# 
+# Import libs that implements the prover machine
 from Sequent import *
+from Tableaux import *
+# Import the routines to generate SVG well formed XML
 from svg import *
 
 # Create a Server implementation by inheritance
@@ -18,6 +25,9 @@ class HemeraServiceContainer(HemeraService):
     # Make WSDL available for HTTP GET
     _wsdl = "".join(open("HemeraService.wsdl").readlines())
 
+    # Represents the prove service. This method will be invoked
+    # from the ZSI infrastructure
+    #   ps - parsed soap, representing the request
     def soap_prove(self, ps, **kw):
         # Call the generated base class method to get appropriate
         # input/output data structures
@@ -26,6 +36,9 @@ class HemeraServiceContainer(HemeraService):
         response._return = self.prove(request._formula)
         return response
 
+    # The prove service algorithm.
+    #  formula - a string representations of a formula
+    #            in the hemera sintax.
     def prove(self, formula):
         print "formula to prove: ", formula
         
@@ -46,6 +59,7 @@ class HemeraServiceContainer(HemeraService):
         svg_str = parseToSVG(proof)               
         return svg_str
 
+# Setup log information
 op = OptionParser(usage="%prog [options]")
 op.add_option("-l", "--loglevel", help="loglevel (DEBUG, WARN)", metavar="LOGLEVEL")
 op.add_option("-p", "--port", help="HTTP port", metavar="PORT", default=8080, type="int")
