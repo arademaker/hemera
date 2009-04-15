@@ -3,12 +3,12 @@
 #
 ##################################################
 
-#!/apps/pydev/bin/python2.4
+#!/usr/bin/python2.4
 # -*- coding: utf-8 -*-
 
 # *** ZSI 2.0 ***
 from optparse import OptionParser
-# Import the ZSI stuff you’d need no matter what
+# Import the ZSI stuff you'd need no matter what
 from ZSI.wstools import logging
 from ZSI.ServiceContainer import AsServer
 # Import the generated Server Object
