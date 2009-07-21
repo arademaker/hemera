@@ -1,4 +1,37 @@
 
+Install
+=======
+
+Hemera depends on the following libraries:
+
+ * ply 2.3 (or superior)
+ * pygraphviz (or superior)
+
+Ply:
+
+The ply library is easy to install, the library can be founded in lib subdirectory.
+
+Pygraphviz:
+
+We followed the procedure discribed in:
+
+http://groups.google.com/group/pygraphviz-discuss/browse_thread/thread/f3b385409bb66420?pli=1
+
+Basically, we downloaded the pygraphviz package from:
+http://networkx.lanl.gov/download/pygraphviz/
+
+And the graphviz package from:
+http://graphviz.org/pub/graphviz/development/macos/leopard/
+
+Finnaly, we edited the setup.py from the pygraphviz adding the correct location of libraries:
+
+$ diff setup.py setup.py~ 
+47,50d46
+< # Mac OS X (pkg from ATT)
+< library_path='/usr/local/lib'
+< include_path='/usr/local/include/graphviz'
+
+
 Pendente
 ========
 
