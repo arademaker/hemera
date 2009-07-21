@@ -7,56 +7,40 @@ Hemera depends on the following libraries:
  * ply 2.3 (or superior)
  * pygraphviz (or superior)
 
-Ply:
 
-The ply library is easy to install, the library can be founded in lib subdirectory.
+Ply: this library is easy to install, the library can be founded in
+lib subdirectory.
 
-Pygraphviz:
+Pygraphviz: the problem with this lib is that it is requires the
+graphviz C library. 
 
-We followed the procedure discribed in:
-
+For Mac OS system, we followed the procedure discribed in:
 http://groups.google.com/group/pygraphviz-discuss/browse_thread/thread/f3b385409bb66420?pli=1
 
-Basically, we downloaded the pygraphviz package from:
+The pygraphviz library in lib directory was downloaded from
 http://networkx.lanl.gov/download/pygraphviz/
 
 And the graphviz package from:
 http://graphviz.org/pub/graphviz/development/macos/leopard/
 
-Finnaly, we edited the setup.py from the pygraphviz adding the correct location of libraries:
+Finnaly, we edited the setup.py from the pygraphviz adding the correct
+location of libraries (in the beggining of the file):
 
-$ diff setup.py setup.py~ 
-47,50d46
-< # Mac OS X (pkg from ATT)
-< library_path='/usr/local/lib'
-< include_path='/usr/local/include/graphviz'
-
-
-Pendente
-========
-
-1. Mostrar o sequent inicial antes de limpar os goals.
-
-2. Melhorar parser para casos como "a --> a --> a" e aceitar apenas
-formulas bem formadas, não aceitar partes de formulas, como no caso "a
--> a" que ele aceita o "a".
+# Mac OS X (pkg from ATT)
+library_path='/usr/local/lib'
+include_path='/usr/local/include/graphviz'
 
 
-Distribuição
-============
+
+Pending
+=======
+
+1. The initial sequent should be listed before cleaning the goals. 
+2. Improve the parser to consider cases like "a --> a --> a". 
+
+
+Making the distro
+=================
 
 python setup.py sdist
-
-
-Instalação
-==========
-
-Requer Python 2.4.3 ou superior. Bibliotecas python necessárias no diretório lib:
-
- * ply 2.3 (ou superior)
- * pygraphviz (0.34 ou superior)
-
-Ambas as bibliotecas são instaladas com o comando:
-
-python setup.py install
 
