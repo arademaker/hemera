@@ -35,18 +35,17 @@ def open_svg():
 	
     svg_file = open("proof.svg", "r")
 
-    while True:  
-        line = svg_file.readline()
-        if not line:
-            break
-		
-        svg_str = svg_str + " " + line
+    line = svg_file.readline()
+    while line:  
+    	svg_str = svg_str + " " + line
         if remove_header == True:
             if svg_str[1:5] != "<svg":
                 svg_str = ""
             else:
                 remove_header = False
-	
+        line = svg_file.readline()
+        
+    svg_str = svg_str.replace("<svg", '<svg id="proof"')
     svg_file.close()
 
     return svg_str

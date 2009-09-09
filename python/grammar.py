@@ -1,5 +1,11 @@
 import ply.lex as lex, ply.yacc as yacc, sys
 
+class SyntaxError(Exception):
+    def __init__(self, value):
+        self.value = value
+    def __str__(self):
+        return repr(self.value)
+
 tokens = ('ID',
           'IMPLICATION',
           'SEQUENT',
@@ -42,7 +48,10 @@ def t_ID(t):
 
 # Error handling rule
 def t_error(t):
-    print "Illegal character '%s'" % t.value[0]
+    errorMsg = "Illegal character '%s'" % t.value[0] 
+    print errorMsg
+    raise SyntaxError(errorMsg)    
+
     t.skip(1)
 
 
@@ -138,7 +147,9 @@ precedence = (
 )
 
 def p_error(p):
-    print "Syntax error in input!"
+    msgError = "Syntax error in input!"
+    print msgError
+    raise SyntaxError(msgError);
 
 
 # Build the parser

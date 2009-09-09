@@ -1,1 +1,8 @@
 *.pyc
+.DS_Store
+.project
+.pydevproject
+*.out
+*.dot
+*.svg
+python/parsetab.py
