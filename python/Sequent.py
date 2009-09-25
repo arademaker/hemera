@@ -239,7 +239,7 @@ def print_proof(out, goal):
         e.attr['label'] = str(edge.label)
         out = print_proof(out, c)
     return out
-
+ 
 
 def eval(input):
     global GRAPH, GOALS, ROOT

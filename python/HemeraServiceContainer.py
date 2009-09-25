@@ -67,7 +67,7 @@ class HemeraServiceContainer(HemeraService):
 # Setup log information
 op = OptionParser(usage="%prog [options]")
 op.add_option("-l", "--loglevel", help="loglevel (DEBUG, WARN)", metavar="LOGLEVEL")
-op.add_option("-p", "--port", help="HTTP port", metavar="PORT", default=8080, type="int")
+op.add_option("-p", "--port", help="HTTP port", metavar="PORT", default=8081, type="int")
 options, args = op.parse_args()
 
 # set the loglevel according to cmd line arg

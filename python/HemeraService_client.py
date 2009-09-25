@@ -15,7 +15,7 @@ import ZSI
 
 # Locator
 class HemeraServiceLocator:
-    HemeraPort_address = "http://localhost:8080/HemeraService"
+    HemeraPort_address = "http://localhost:8081/HemeraService"
     def getHemeraPortAddress(self):
         return HemeraServiceLocator.HemeraPort_address
     def getHemeraPort(self, url=None, **kw):
@@ -35,7 +35,7 @@ class HemeraBindingSOAP:
         if isinstance(request, proveRequest) is False:
             raise TypeError, "%s incorrect request type" % (request.__class__)
         # no input wsaction
-        self.binding.Send(None, None, request, soapaction="http://localhost:8080/HemeraService/prove", **kw)
+        self.binding.Send(None, None, request, soapaction="http://localhost:8081/HemeraService/prove", **kw)
         # no output wsaction
         response = self.binding.Receive(proveResponse.typecode)
         return response
@@ -46,7 +46,7 @@ class proveRequest:
         formula -- part formula
         """
         self._formula =  kw.get("formula")
-proveRequest.typecode = Struct(pname=("http://localhost:8080/HemeraService","prove"), ofwhat=[ZSI.TC.String(pname="formula", aname="_formula", typed=False, encoded=None, minOccurs=1, maxOccurs=1, nillable=True)], pyclass=proveRequest, encoded="http://localhost:8080/HemeraService")
+proveRequest.typecode = Struct(pname=("http://localhost:8081/HemeraService","prove"), ofwhat=[ZSI.TC.String(pname="formula", aname="_formula", typed=False, encoded=None, minOccurs=1, maxOccurs=1, nillable=True)], pyclass=proveRequest, encoded="http://localhost:8081/HemeraService")
 
 class proveResponse:
     def __init__(self, **kw):
@@ -54,4 +54,4 @@ class proveResponse:
         return -- part return
         """
         self._return =  kw.get("return")
-proveResponse.typecode = Struct(pname=("http://localhost:8080/HemeraService","proveResponse"), ofwhat=[ZSI.TC.String(pname="return", aname="_return", typed=False, encoded=None, minOccurs=1, maxOccurs=1, nillable=True)], pyclass=proveResponse, encoded="http://localhost:8080/HemeraService")
+proveResponse.typecode = Struct(pname=("http://localhost:8081/HemeraService","proveResponse"), ofwhat=[ZSI.TC.String(pname="return", aname="_return", typed=False, encoded=None, minOccurs=1, maxOccurs=1, nillable=True)], pyclass=proveResponse, encoded="http://localhost:8081/HemeraService")

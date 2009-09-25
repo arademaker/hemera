@@ -18,7 +18,7 @@ class proveRequest:
         formula -- part formula
         """
         self._formula =  kw.get("formula")
-proveRequest.typecode = Struct(pname=("http://localhost:8080/HemeraService","prove"), ofwhat=[ZSI.TC.String(pname="formula", aname="_formula", typed=False, encoded=None, minOccurs=1, maxOccurs=1, nillable=True)], pyclass=proveRequest, encoded="http://localhost:8080/HemeraService")
+proveRequest.typecode = Struct(pname=("http://localhost:8081/HemeraService","prove"), ofwhat=[ZSI.TC.String(pname="formula", aname="_formula", typed=False, encoded=None, minOccurs=1, maxOccurs=1, nillable=True)], pyclass=proveRequest, encoded="http://localhost:8081/HemeraService")
 
 class proveResponse:
     def __init__(self, **kw):
@@ -26,7 +26,7 @@ class proveResponse:
         return -- part return
         """
         self._return =  kw.get("return")
-proveResponse.typecode = Struct(pname=("http://localhost:8080/HemeraService","proveResponse"), ofwhat=[ZSI.TC.String(pname="return", aname="_return", typed=False, encoded=None, minOccurs=1, maxOccurs=1, nillable=True)], pyclass=proveResponse, encoded="http://localhost:8080/HemeraService")
+proveResponse.typecode = Struct(pname=("http://localhost:8081/HemeraService","proveResponse"), ofwhat=[ZSI.TC.String(pname="return", aname="_return", typed=False, encoded=None, minOccurs=1, maxOccurs=1, nillable=True)], pyclass=proveResponse, encoded="http://localhost:8081/HemeraService")
 
 
 # Service Skeletons
@@ -41,6 +41,6 @@ class HemeraService(ServiceSOAPBinding):
         request = ps.Parse(proveRequest.typecode)
         return request,proveResponse()
 
-    soapAction['http://localhost:8080/HemeraService/prove'] = 'soap_prove'
+    soapAction['http://localhost:8081/HemeraService/prove'] = 'soap_prove'
     root[(proveRequest.typecode.nspname,proveRequest.typecode.pname)] = 'soap_prove'
 

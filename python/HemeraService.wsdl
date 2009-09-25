@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <definitions name="HemeraService"
- targetNamespace="http://localhost:8080/HemeraService"
- xmlns:tns="http://localhost:8080/HemeraService"
+ targetNamespace="http://localhost:8081/HemeraService"
+ xmlns:tns="http://localhost:8081/HemeraService"
  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
  xmlns="http://schemas.xmlsoap.org/wsdl/">
@@ -24,12 +24,12 @@
     <binding name="HemeraBinding" type="tns:HemeraPortType">
         <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
         <operation name="prove">
-            <soap:operation soapAction="http://localhost:8080/HemeraService/prove"/>
+            <soap:operation soapAction="http://localhost:8081/HemeraService/prove"/>
             <input>
-                <soap:body use="literal" namespace="http://localhost:8080/HemeraService"/>
+                <soap:body use="literal" namespace="http://localhost:8081/HemeraService"/>
             </input>
             <output>
-                <soap:body use="literal" namespace="http://localhost:8080/HemeraService"/>
+                <soap:body use="literal" namespace="http://localhost:8081/HemeraService"/>
             </output>
         </operation>
     </binding>
@@ -37,7 +37,7 @@
     <service name="HemeraService">
         <documentation>Try to prove a theorem</documentation>
         <port name="HemeraPort" binding="tns:HemeraBinding">
-            <soap:address location="http://localhost:8080/HemeraService"/>
+            <soap:address location="http://localhost:8081/HemeraService"/>
         </port>
     </service>
 
