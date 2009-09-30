@@ -6,3 +6,4 @@
 *.dot
 *.svg
 python/parsetab.py
+.settings

@@ -6,23 +6,117 @@
  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
  xmlns="http://schemas.xmlsoap.org/wsdl/">
 
-    <message name="proveRequest">
+    <message name="startRequest">
+        <part name="id" type="xsd:string"/>
+        <part name="spec" type="xsd:string"/>
+    </message>
+    <message name="startResponse">
+        <part name="return" type="xsd:string"/>
+    </message>
+    
+    <message name="stepRequest">
+        <part name="id" type="xsd:string"/>
+    </message>
+    <message name="stepResponse">
+        <part name="return" type="xsd:string"/>
+    </message>
+    
+    <message name="runRequest">
+        <part name="id" type="xsd:string"/>
+    </message>
+    <message name="runResponse">
+        <part name="return" type="xsd:string"/>
+    </message>
+    
+    <message name="check_syntaxRequest">
+        <part name="spec" type="xsd:string"/>
+    </message>
+    <message name="check_syntaxResponse">
+        <part name="return" type="xsd:string"/>
+    </message>    
+    
+   <message name="proveRequest">
         <part name="formula" type="xsd:string"/>
     </message>
     <message name="proveResponse">
         <part name="return" type="xsd:string"/>
-    </message>
+    </message>            
 
     <portType name="HemeraPortType">
+        <operation name="start">
+            <documentation>Starts a proof process in the background prover.</documentation>
+            <input message="tns:startRequest"/>
+            <output message="tns:startResponse"/>
+        </operation>
+        
+        <operation name="step">
+            <documentation>Run a given number of steps of a proof process.</documentation>
+            <input message="tns:stepRequest"/>
+            <output message="tns:stepResponse"/>
+        </operation>
+        
+        <operation name="run">
+            <documentation>Run all steps to try to prove a given specification.</documentation>
+            <input message="tns:runRequest"/>
+            <output message="tns:runResponse"/>
+        </operation>
+        
+        <operation name="check_syntax">
+            <documentation>Checks the syntax of a specification written in the prover language.</documentation>
+            <input message="tns:check_syntaxRequest"/>
+            <output message="tns:check_syntaxResponse"/>
+        </operation>   
+        
         <operation name="prove">
-            <documentation> the prove method </documentation>
+            <documentation>Deprecated: Backward compatibility.</documentation>
             <input message="tns:proveRequest"/>
             <output message="tns:proveResponse"/>
-        </operation>
+        </operation>                             
     </portType>
 
     <binding name="HemeraBinding" type="tns:HemeraPortType">
         <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+        
+        <operation name="check_syntax">
+            <soap:operation soapAction="http://localhost:8081/HemeraService/check_syntax"/>
+            <input>
+                <soap:body use="literal" namespace="http://localhost:8081/HemeraService"/>
+            </input>
+            <output>
+                <soap:body use="literal" namespace="http://localhost:8081/HemeraService"/>
+            </output>
+        </operation>    
+        
+        <operation name="start">
+            <soap:operation soapAction="http://localhost:8081/HemeraService/start"/>
+            <input>
+                <soap:body use="literal" namespace="http://localhost:8081/HemeraService"/>
+            </input>
+            <output>
+                <soap:body use="literal" namespace="http://localhost:8081/HemeraService"/>
+            </output>
+        </operation> 
+        
+        <operation name="step">
+            <soap:operation soapAction="http://localhost:8081/HemeraService/step"/>
+            <input>
+                <soap:body use="literal" namespace="http://localhost:8081/HemeraService"/>
+            </input>
+            <output>
+                <soap:body use="literal" namespace="http://localhost:8081/HemeraService"/>
+            </output>
+        </operation>   
+        
+        <operation name="run">
+            <soap:operation soapAction="http://localhost:8081/HemeraService/run"/>
+            <input>
+                <soap:body use="literal" namespace="http://localhost:8081/HemeraService"/>
+            </input>
+            <output>
+                <soap:body use="literal" namespace="http://localhost:8081/HemeraService"/>
+            </output>
+        </operation>            
+        
         <operation name="prove">
             <soap:operation soapAction="http://localhost:8081/HemeraService/prove"/>
             <input>
@@ -31,11 +125,11 @@
             <output>
                 <soap:body use="literal" namespace="http://localhost:8081/HemeraService"/>
             </output>
-        </operation>
+        </operation>                                      
     </binding>
 
     <service name="HemeraService">
-        <documentation>Try to prove a theorem</documentation>
+        <documentation>A web service wrapper for true background prover.</documentation>
         <port name="HemeraPort" binding="tns:HemeraBinding">
             <soap:address location="http://localhost:8081/HemeraService"/>
         </port>

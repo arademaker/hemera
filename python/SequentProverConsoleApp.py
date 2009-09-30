@@ -1,6 +1,9 @@
 from Sequent import	*
 
 print ISSUE
+
+prover = SequentProver()
+
 while 1:
     try:
         s = raw_input('(sequent prover)> ')
@@ -8,7 +11,7 @@ while 1:
             continue
         else:
             cmd = yacc.parse(s)
-            eval(cmd)
+            prover.eval(cmd)
     except EOFError:
         break
     except NoMoreGoals:

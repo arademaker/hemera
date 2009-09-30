@@ -12,6 +12,72 @@ from HemeraService_types import *
 from ZSI.ServiceContainer import ServiceSOAPBinding
 
 # Messages  
+class check_syntaxRequest:
+    def __init__(self, **kw):
+        """Keyword parameters:
+        spec -- part spec
+        """
+        self._spec =  kw.get("spec")
+check_syntaxRequest.typecode = Struct(pname=("http://localhost:8081/HemeraService","check_syntax"), ofwhat=[ZSI.TC.String(pname="spec", aname="_spec", typed=False, encoded=None, minOccurs=1, maxOccurs=1, nillable=True)], pyclass=check_syntaxRequest, encoded="http://localhost:8081/HemeraService")
+
+class check_syntaxResponse:
+    def __init__(self, **kw):
+        """Keyword parameters:
+        return -- part return
+        """
+        self._return =  kw.get("return")
+check_syntaxResponse.typecode = Struct(pname=("http://localhost:8081/HemeraService","check_syntaxResponse"), ofwhat=[ZSI.TC.String(pname="return", aname="_return", typed=False, encoded=None, minOccurs=1, maxOccurs=1, nillable=True)], pyclass=check_syntaxResponse, encoded="http://localhost:8081/HemeraService")
+
+class startRequest:
+    def __init__(self, **kw):
+        """Keyword parameters:
+        id -- part id
+        spec -- part spec
+        """
+        self._id =  kw.get("id")
+        self._spec =  kw.get("spec")
+startRequest.typecode = Struct(pname=("http://localhost:8081/HemeraService","start"), ofwhat=[ZSI.TC.String(pname="id", aname="_id", typed=False, encoded=None, minOccurs=1, maxOccurs=1, nillable=True), ZSI.TC.String(pname="spec", aname="_spec", typed=False, encoded=None, minOccurs=1, maxOccurs=1, nillable=True)], pyclass=startRequest, encoded="http://localhost:8081/HemeraService")
+
+class startResponse:
+    def __init__(self, **kw):
+        """Keyword parameters:
+        return -- part return
+        """
+        self._return =  kw.get("return")
+startResponse.typecode = Struct(pname=("http://localhost:8081/HemeraService","startResponse"), ofwhat=[ZSI.TC.String(pname="return", aname="_return", typed=False, encoded=None, minOccurs=1, maxOccurs=1, nillable=True)], pyclass=startResponse, encoded="http://localhost:8081/HemeraService")
+
+class stepRequest:
+    def __init__(self, **kw):
+        """Keyword parameters:
+        id -- part id
+        """
+        self._id =  kw.get("id")
+stepRequest.typecode = Struct(pname=("http://localhost:8081/HemeraService","step"), ofwhat=[ZSI.TC.String(pname="id", aname="_id", typed=False, encoded=None, minOccurs=1, maxOccurs=1, nillable=True)], pyclass=stepRequest, encoded="http://localhost:8081/HemeraService")
+
+class stepResponse:
+    def __init__(self, **kw):
+        """Keyword parameters:
+        return -- part return
+        """
+        self._return =  kw.get("return")
+stepResponse.typecode = Struct(pname=("http://localhost:8081/HemeraService","stepResponse"), ofwhat=[ZSI.TC.String(pname="return", aname="_return", typed=False, encoded=None, minOccurs=1, maxOccurs=1, nillable=True)], pyclass=stepResponse, encoded="http://localhost:8081/HemeraService")
+
+class runRequest:
+    def __init__(self, **kw):
+        """Keyword parameters:
+        id -- part id
+        """
+        self._id =  kw.get("id")
+runRequest.typecode = Struct(pname=("http://localhost:8081/HemeraService","run"), ofwhat=[ZSI.TC.String(pname="id", aname="_id", typed=False, encoded=None, minOccurs=1, maxOccurs=1, nillable=True)], pyclass=runRequest, encoded="http://localhost:8081/HemeraService")
+
+class runResponse:
+    def __init__(self, **kw):
+        """Keyword parameters:
+        return -- part return
+        """
+        self._return =  kw.get("return")
+runResponse.typecode = Struct(pname=("http://localhost:8081/HemeraService","runResponse"), ofwhat=[ZSI.TC.String(pname="return", aname="_return", typed=False, encoded=None, minOccurs=1, maxOccurs=1, nillable=True)], pyclass=runResponse, encoded="http://localhost:8081/HemeraService")
+
 class proveRequest:
     def __init__(self, **kw):
         """Keyword parameters:
@@ -36,6 +102,34 @@ class HemeraService(ServiceSOAPBinding):
 
     def __init__(self, post='/HemeraService', **kw):
         ServiceSOAPBinding.__init__(self, post)
+
+    def soap_check_syntax(self, ps, **kw):
+        request = ps.Parse(check_syntaxRequest.typecode)
+        return request,check_syntaxResponse()
+
+    soapAction['http://localhost:8081/HemeraService/check_syntax'] = 'soap_check_syntax'
+    root[(check_syntaxRequest.typecode.nspname,check_syntaxRequest.typecode.pname)] = 'soap_check_syntax'
+
+    def soap_start(self, ps, **kw):
+        request = ps.Parse(startRequest.typecode)
+        return request,startResponse()
+
+    soapAction['http://localhost:8081/HemeraService/start'] = 'soap_start'
+    root[(startRequest.typecode.nspname,startRequest.typecode.pname)] = 'soap_start'
+
+    def soap_step(self, ps, **kw):
+        request = ps.Parse(stepRequest.typecode)
+        return request,stepResponse()
+
+    soapAction['http://localhost:8081/HemeraService/step'] = 'soap_step'
+    root[(stepRequest.typecode.nspname,stepRequest.typecode.pname)] = 'soap_step'
+
+    def soap_run(self, ps, **kw):
+        request = ps.Parse(runRequest.typecode)
+        return request,runResponse()
+
+    soapAction['http://localhost:8081/HemeraService/run'] = 'soap_run'
+    root[(runRequest.typecode.nspname,runRequest.typecode.pname)] = 'soap_run'
 
     def soap_prove(self, ps, **kw):
         request = ps.Parse(proveRequest.typecode)

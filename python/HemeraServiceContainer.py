@@ -1,64 +1,121 @@
-##################################################
-# HemeraServiceContainer.py
-#
-##################################################
-
 #!/usr/bin/python2.4
 # -*- coding: utf-8 -*-
 
-# *** ZSI 2.1 ***
+# ZSI 2.1 Infrastructure
 from optparse import OptionParser
-# Import the ZSI stuff you'd need no matter what
 from ZSI.wstools import logging
 from ZSI.ServiceContainer import AsServer
-# Import the generated Server Object
+# ZSI 2.1 Generated Service Skeleton
 from HemeraService_server import HemeraService
-# Import libs that implements the prover machine
+# Prover modules 
 from Sequent import *
-#from Tableaux import *
-# Import the routines to generate SVG well formed XML
 from svg import *
-#
 from grammar import SyntaxError
+# Other libs
+from datetime import date
 
 # Create a Server implementation by inheritance
 class HemeraServiceContainer(HemeraService):
 
     # Make WSDL available for HTTP GET
     _wsdl = "".join(open("HemeraService.wsdl").readlines())
+    _proverMap = {}      
 
-    # Represents the prove service. This method will be invoked
-    # from the ZSI infrastructure
-    #   ps - parsed soap, representing the request
+    def soap_check_syntax(self, ps, **kw):
+        request, response = HemeraService.soap_check_syntax(self, ps, **kw)
+        response._return = self.check_syntax(request._spec)
+        return request, response
+    
+    def soap_start(self, ps, **kw):
+        request, response = HemeraService.soap_start(self, ps, **kw)
+        response._return = self.start(request._id, request._spec)
+        return request, response    
+    
+    def soap_step(self, ps, **kw):
+        request, response = HemeraService.soap_step(self, ps, **kw)
+        response._return = self.step(request._id)
+        return request, response
+    
+    def soap_run(self, ps, **kw):
+        request, response = HemeraService.soap_run(self, ps, **kw)
+        response._return = self.run(request._id)
+        return request, response    
+    
     def soap_prove(self, ps, **kw):
-        # Call the generated base class method to get appropriate
-        # input/output data structures
         request, response = HemeraService.soap_prove(self, ps, **kw)
         response._return = self.prove(request._formula)
-        return request, response
+        return request, response        
 
-    # The prove service algorithm.
-    #  formula - a string representations of a formula
-    #            in the hemera sintax.
-    def prove(self, formula):
-        print "formula to prove: ", formula
+
+    def check_syntax(self, spec):
+        print "Checking Syntax of the following specification: " + spec
+        try:
+            s = "read " + spec
+            cmd = yacc.parse(s)
+        except SyntaxError, e:
+            return e.value
+        else:
+            return ""            
         
+    def start(self, id, spec):
+        print "Starting proof process for user_id " + id + ". Trying to prove " + spec
+        ret = self.check_syntax(spec)
+        if ret == "":
+            ret = self.exec_prover_cmd(id, "read " + spec)
+        return ret            
+        
+    def step(self, id):
+        print "Running a step of the prover process for user_id " + id
+        self.exec_prover_cmd(id, "step")
+        proof = self.exec_prover_cmd(id, "print")
+        ret = parseToSVG(proof)
+        return ret             
+    
+    def run(self, id):        
+        print "Running all steps of the prover process for user_id " + id
+        self.exec_prover_cmd(id, "run")
+        proof = self.exec_prover_cmd(id, "print")
+        ret = parseToSVG(proof)
+        return ret   
+    
+    def get_prover_instance(self, id):
+        if (id in self._proverMap): 
+            prover = self._proverMap[id]
+        else:
+            prover = SequentProver()
+            self._proverMap[id] = prover
+        return prover
+    
+    def exec_prover_cmd(self, id, cmd):
+        try:
+            ret = ""
+            prover = self.get_prover_instance(id)
+            cmdParsed = yacc.parse(cmd)
+            ret = prover.eval(cmdParsed)            
+        except Exception, inst:
+            ret = "Error: " + inst.__str__()
+        return ret            
+
+    def prove(self, formula):
+        print "formula to prove: ", formula        
         ret = ""
+        
+        prover = self.get_prover_instance("id")
         
         try:
             s = "read " + formula  
             cmd = yacc.parse(s)
-            eval(cmd)
+            prover.eval(cmd)
         except SyntaxError:
             ret = "Error: Syntax Error" 
         else:
             s = "run"
             cmd = yacc.parse(s)
-            eval(cmd)
+            prover.eval(cmd)
         
             s = "print"
             cmd = yacc.parse(s)
-            proof = eval(cmd)
+            proof = prover.eval(cmd)
         
             ret = parseToSVG(proof)       
            
