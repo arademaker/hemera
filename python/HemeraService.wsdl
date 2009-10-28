@@ -7,40 +7,50 @@
  xmlns="http://schemas.xmlsoap.org/wsdl/">
 
     <message name="startRequest">
-        <part name="id" type="xsd:string"/>
-        <part name="spec" type="xsd:string"/>
+        <part name="id" type="xsd:string"></part>
+        <part name="spec" type="xsd:string"></part>
     </message>
     <message name="startResponse">
-        <part name="return" type="xsd:string"/>
+        <part name="return" type="xsd:boolean"></part>
+        <part name="msg" type="xsd:string"></part>
     </message>
     
     <message name="stepRequest">
-        <part name="id" type="xsd:string"/>
+        <part name="id" type="xsd:string"></part>
     </message>
     <message name="stepResponse">
-        <part name="return" type="xsd:string"/>
+        <part name="return" type="xsd:boolean"></part>
+        <part name="proofRepr" type="xsd:string"></part>
+        <part name="msg" type="xsd:string"></part>
     </message>
     
     <message name="runRequest">
-        <part name="id" type="xsd:string"/>
+        <part name="id" type="xsd:string"></part>
     </message>
     <message name="runResponse">
-        <part name="return" type="xsd:string"/>
+        <part name="return" type="xsd:boolean"></part>
+        <part name="proofRepr" type="xsd:string"></part>
+        <part name="msg" type="xsd:string"></part>
     </message>
     
     <message name="check_syntaxRequest">
         <part name="spec" type="xsd:string"/>
     </message>
     <message name="check_syntaxResponse">
-        <part name="return" type="xsd:string"/>
+        <part name="return" type="xsd:boolean"></part>
+        <part name="msg" type="xsd:string"></part>
     </message>    
     
    <message name="proveRequest">
-        <part name="formula" type="xsd:string"/>
+        <part name="formula" type="xsd:string"></part>
     </message>
     <message name="proveResponse">
-        <part name="return" type="xsd:string"/>
+        <part name="return" type="xsd:string"></part>
     </message>            
+
+    <message name="check_syntax_faultMsg">
+    	<part name="fault" type="xsd:string"></part>
+    </message>
 
     <portType name="HemeraPortType">
         <operation name="start">

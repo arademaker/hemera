@@ -21,24 +21,28 @@ class HemeraServiceContainer(HemeraService):
     _wsdl = "".join(open("HemeraService.wsdl").readlines())
     _proverMap = {}      
 
+    '''
+    SOAP Implementations:
+    =======================================
+    '''
     def soap_check_syntax(self, ps, **kw):
         request, response = HemeraService.soap_check_syntax(self, ps, **kw)
-        response._return = self.check_syntax(request._spec)
+        response._return, response._msg = self.check_syntax(request._spec)
         return request, response
     
     def soap_start(self, ps, **kw):
         request, response = HemeraService.soap_start(self, ps, **kw)
-        response._return = self.start(request._id, request._spec)
+        response._return, response._msg = self.start(request._id, request._spec)
         return request, response    
     
     def soap_step(self, ps, **kw):
         request, response = HemeraService.soap_step(self, ps, **kw)
-        response._return = self.step(request._id)
+        response._return, response._proofRepr, response._msg = self.step(request._id)
         return request, response
     
     def soap_run(self, ps, **kw):
         request, response = HemeraService.soap_run(self, ps, **kw)
-        response._return = self.run(request._id)
+        response._return, response._proofRepr, response._msg = self.run(request._id)
         return request, response    
     
     def soap_prove(self, ps, **kw):
@@ -46,38 +50,50 @@ class HemeraServiceContainer(HemeraService):
         response._return = self.prove(request._formula)
         return request, response        
 
-
+    '''
+    Delegates:
+    =======================================
+    '''
     def check_syntax(self, spec):
         print "Checking Syntax of the following specification: " + spec
         try:
             s = "read " + spec
             cmd = yacc.parse(s)
         except SyntaxError, e:
-            return e.value
+            msg = e.value
+            return False, msg
         else:
-            return ""            
+            return True, ""        
         
     def start(self, id, spec):
         print "Starting proof process for user_id " + id + ". Trying to prove " + spec
-        ret = self.check_syntax(spec)
-        if ret == "":
-            ret = self.exec_prover_cmd(id, "read " + spec)
-        return ret            
+        ret, msg = self.check_syntax(spec)
+        if ret:
+            try:
+                prover = self.get_prover_instance(id)
+                cmdParsed = yacc.parse("read " + spec)
+                prover.eval(cmdParsed)
+            except Exception, inst:
+                msg = inst.__str__()
+                return False, msg 
+            else:
+                return True, "" 
+        else:                   
+            return ret, msg            
         
     def step(self, id):
         print "Running a step of the prover process for user_id " + id
-        self.exec_prover_cmd(id, "step")
-        proof = self.exec_prover_cmd(id, "print")
-        ret = parseToSVG(proof)
-        return ret             
+        return self.exec_step_run_cmd(id, "step")         
     
     def run(self, id):        
         print "Running all steps of the prover process for user_id " + id
-        self.exec_prover_cmd(id, "run")
-        proof = self.exec_prover_cmd(id, "print")
-        ret = parseToSVG(proof)
-        return ret   
+        return self.exec_step_run_cmd(id, "run")    
     
+    
+    '''
+    Helpers:
+    =======================================
+    '''    
     def get_prover_instance(self, id):
         if (id in self._proverMap): 
             prover = self._proverMap[id]
@@ -86,16 +102,23 @@ class HemeraServiceContainer(HemeraService):
             self._proverMap[id] = prover
         return prover
     
-    def exec_prover_cmd(self, id, cmd):
+    def exec_step_run_cmd(self, id, cmd):
+        prover = self.get_prover_instance(id)
+        cmdParsed = yacc.parse(cmd)
         try:
-            ret = ""
-            prover = self.get_prover_instance(id)
-            cmdParsed = yacc.parse(cmd)
-            ret = prover.eval(cmdParsed)            
+            prover.eval(cmdParsed)              
         except Exception, inst:
-            ret = "Error: " + inst.__str__()
-        return ret            
+            msg = inst.__str__()
+            return False, "", msg 
+        else:
+            cmdParsed = yacc.parse("print")
+            proofRepr = prover.eval(cmdParsed)
+            return True, parseToSVG(proofRepr), prover.finalStatus                        
 
+    '''
+    Deprecated:
+    =======================================
+    '''
     def prove(self, formula):
         print "formula to prove: ", formula        
         ret = ""

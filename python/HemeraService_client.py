@@ -92,9 +92,11 @@ class check_syntaxResponse:
     def __init__(self, **kw):
         """Keyword parameters:
         return -- part return
+        msg -- part msg
         """
         self._return =  kw.get("return")
-check_syntaxResponse.typecode = Struct(pname=("http://localhost:8081/HemeraService","check_syntaxResponse"), ofwhat=[ZSI.TC.String(pname="return", aname="_return", typed=False, encoded=None, minOccurs=1, maxOccurs=1, nillable=True)], pyclass=check_syntaxResponse, encoded="http://localhost:8081/HemeraService")
+        self._msg =  kw.get("msg")
+check_syntaxResponse.typecode = Struct(pname=("http://localhost:8081/HemeraService","check_syntaxResponse"), ofwhat=[ZSI.TC.Boolean(pname="return", aname="_return", typed=False, encoded=None, minOccurs=1, maxOccurs=1, nillable=True), ZSI.TC.String(pname="msg", aname="_msg", typed=False, encoded=None, minOccurs=1, maxOccurs=1, nillable=True)], pyclass=check_syntaxResponse, encoded="http://localhost:8081/HemeraService")
 
 class startRequest:
     def __init__(self, **kw):
@@ -110,9 +112,11 @@ class startResponse:
     def __init__(self, **kw):
         """Keyword parameters:
         return -- part return
+        msg -- part msg
         """
         self._return =  kw.get("return")
-startResponse.typecode = Struct(pname=("http://localhost:8081/HemeraService","startResponse"), ofwhat=[ZSI.TC.String(pname="return", aname="_return", typed=False, encoded=None, minOccurs=1, maxOccurs=1, nillable=True)], pyclass=startResponse, encoded="http://localhost:8081/HemeraService")
+        self._msg =  kw.get("msg")
+startResponse.typecode = Struct(pname=("http://localhost:8081/HemeraService","startResponse"), ofwhat=[ZSI.TC.Boolean(pname="return", aname="_return", typed=False, encoded=None, minOccurs=1, maxOccurs=1, nillable=True), ZSI.TC.String(pname="msg", aname="_msg", typed=False, encoded=None, minOccurs=1, maxOccurs=1, nillable=True)], pyclass=startResponse, encoded="http://localhost:8081/HemeraService")
 
 class stepRequest:
     def __init__(self, **kw):
@@ -126,9 +130,13 @@ class stepResponse:
     def __init__(self, **kw):
         """Keyword parameters:
         return -- part return
+        proofRepr -- part proofRepr
+        msg -- part msg
         """
         self._return =  kw.get("return")
-stepResponse.typecode = Struct(pname=("http://localhost:8081/HemeraService","stepResponse"), ofwhat=[ZSI.TC.String(pname="return", aname="_return", typed=False, encoded=None, minOccurs=1, maxOccurs=1, nillable=True)], pyclass=stepResponse, encoded="http://localhost:8081/HemeraService")
+        self._proofRepr =  kw.get("proofRepr")
+        self._msg =  kw.get("msg")
+stepResponse.typecode = Struct(pname=("http://localhost:8081/HemeraService","stepResponse"), ofwhat=[ZSI.TC.Boolean(pname="return", aname="_return", typed=False, encoded=None, minOccurs=1, maxOccurs=1, nillable=True), ZSI.TC.String(pname="proofRepr", aname="_proofRepr", typed=False, encoded=None, minOccurs=1, maxOccurs=1, nillable=True), ZSI.TC.String(pname="msg", aname="_msg", typed=False, encoded=None, minOccurs=1, maxOccurs=1, nillable=True)], pyclass=stepResponse, encoded="http://localhost:8081/HemeraService")
 
 class runRequest:
     def __init__(self, **kw):
@@ -142,9 +150,13 @@ class runResponse:
     def __init__(self, **kw):
         """Keyword parameters:
         return -- part return
+        proofRepr -- part proofRepr
+        msg -- part msg
         """
         self._return =  kw.get("return")
-runResponse.typecode = Struct(pname=("http://localhost:8081/HemeraService","runResponse"), ofwhat=[ZSI.TC.String(pname="return", aname="_return", typed=False, encoded=None, minOccurs=1, maxOccurs=1, nillable=True)], pyclass=runResponse, encoded="http://localhost:8081/HemeraService")
+        self._proofRepr =  kw.get("proofRepr")
+        self._msg =  kw.get("msg")
+runResponse.typecode = Struct(pname=("http://localhost:8081/HemeraService","runResponse"), ofwhat=[ZSI.TC.Boolean(pname="return", aname="_return", typed=False, encoded=None, minOccurs=1, maxOccurs=1, nillable=True), ZSI.TC.String(pname="proofRepr", aname="_proofRepr", typed=False, encoded=None, minOccurs=1, maxOccurs=1, nillable=True), ZSI.TC.String(pname="msg", aname="_msg", typed=False, encoded=None, minOccurs=1, maxOccurs=1, nillable=True)], pyclass=runResponse, encoded="http://localhost:8081/HemeraService")
 
 class proveRequest:
     def __init__(self, **kw):

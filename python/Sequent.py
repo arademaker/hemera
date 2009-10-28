@@ -12,7 +12,8 @@ class SequentProver:
     def __init__(self):
         self._ROOT = None
         self._GOALS = []
-        self._GRAPH = None 
+        self._GRAPH = None
+        self.finalStatus = "" 
         
     def is_atomic(self, formula):
         if len(formula.get_childs()) == 0: return True
@@ -156,7 +157,8 @@ class SequentProver:
             try:
                 return self.proof_steps(n-1, self.proof_step(goals))
             except REDUCE:
-                print "No proof rules applicable."
+                self.finalStatus = "No proof rules applicable."
+                print self.finalStatus                 
                 return goals
             except NoMoreGoals:
                 return goals
@@ -200,7 +202,8 @@ class SequentProver:
     
     def print_goals(self, goals):
         if (goals == [] or goals == None):
-            print "No more goals."
+            self.finalStatus = "No more goals."
+            print self.finalStatus
         else:
             for n, g in enumerate(goals):
                 print 'Goal #%s: %s' %(n, self.string_from_goal(g))
@@ -242,9 +245,8 @@ class SequentProver:
         return out
      
     
-    def eval(self, input):
-        ret = ''  
-    
+    def eval(self, input): 
+        proofRepr = ""
         if input[0] == 'step': 
             self.step()
         elif input[0] == 'steps':
@@ -253,6 +255,7 @@ class SequentProver:
             self.steps(input[1])
         elif input[0] == 'read':
             print 'New proof initialized!'
+            self.finalStatus = ""
             self._GRAPH, self._GOALS = self.read_goal(input[1])
             self._ROOT = self._GOALS[0]
         elif input[0] == 'run':
@@ -264,8 +267,7 @@ class SequentProver:
         elif input[0] == 'print':
             proof = pyg.AGraph()
             self.print_proof(proof, self._ROOT)
-            ret = proof.string()
-            print ret
-    
-            
-        return ret
+            proofRepr = proof.string()
+            print proofRepr
+
+        return proofRepr
