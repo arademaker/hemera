@@ -11,7 +11,8 @@
         <part name="spec" type="xsd:string"></part>
     </message>
     <message name="startResponse">
-        <part name="return" type="xsd:boolean"></part>
+        <part name="return" type="xsd:boolean"></part>        
+        <part name="proofRepr" type="xsd:string"></part>
         <part name="msg" type="xsd:string"></part>
     </message>
     

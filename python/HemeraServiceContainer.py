@@ -32,7 +32,7 @@ class HemeraServiceContainer(HemeraService):
     
     def soap_start(self, ps, **kw):
         request, response = HemeraService.soap_start(self, ps, **kw)
-        response._return, response._msg = self.start(request._id, request._spec)
+        response._return, response._proofRepr, response._msg = self.start(request._id, request._spec)
         return request, response    
     
     def soap_step(self, ps, **kw):
@@ -69,25 +69,17 @@ class HemeraServiceContainer(HemeraService):
         print "Starting proof process for user_id " + id + ". Trying to prove " + spec
         ret, msg = self.check_syntax(spec)
         if ret:
-            try:
-                prover = self.get_prover_instance(id)
-                cmdParsed = yacc.parse("read " + spec)
-                prover.eval(cmdParsed)
-            except Exception, inst:
-                msg = inst.__str__()
-                return False, msg 
-            else:
-                return True, "" 
+            return self.exec_prover_cmd(id, "read " + spec)
         else:                   
-            return ret, msg            
+            return ret, "", msg            
         
     def step(self, id):
         print "Running a step of the prover process for user_id " + id
-        return self.exec_step_run_cmd(id, "step")         
+        return self.exec_prover_cmd(id, "step")         
     
     def run(self, id):        
         print "Running all steps of the prover process for user_id " + id
-        return self.exec_step_run_cmd(id, "run")    
+        return self.exec_prover_cmd(id, "run")    
     
     
     '''
@@ -102,7 +94,7 @@ class HemeraServiceContainer(HemeraService):
             self._proverMap[id] = prover
         return prover
     
-    def exec_step_run_cmd(self, id, cmd):
+    def exec_prover_cmd(self, id, cmd):
         prover = self.get_prover_instance(id)
         cmdParsed = yacc.parse(cmd)
         try:

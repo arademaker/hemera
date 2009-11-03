@@ -15,6 +15,7 @@ class SequentProver:
         self._GRAPH = None
         self.finalStatus = "" 
         
+        
     def is_atomic(self, formula):
         if len(formula.get_childs()) == 0: return True
         else: return False
@@ -207,44 +208,54 @@ class SequentProver:
         else:
             for n, g in enumerate(goals):
                 print 'Goal #%s: %s' %(n, self.string_from_goal(g))
-    
-    
+                
+        
     def set_goals(self, goals):
         self._GOALS = goals
         self.print_goals(goals)
-    
-    
+        
+        
     def step(self):
         self.set_goals( self.proof_steps(1, self._GOALS) )
+        
     
     def steps(self, n):
         self.set_goals( self.proof_steps(max(int(n),0), self._GOALS) )
+        
     
     def run(self):
         self.set_goals( self.proof_steps(-1, self._GOALS) )
-    
-    
+        
+        
     def print_proof(self, out, goal):
         ''' 
-        receive an intance of MyGraph.Graph and produce an instance of pyparsing.AGraph 
+        receive an intance of MyGraph.Graph and produce an instance of pygraphviz.AGraph 
         '''
     
-        n1 = self.string_from_goal(goal)
-        n1 = str(n1)
-        out.add_node(n1)
+        out, n1 = self.add_graphviz_node(out, goal)                   
         childs = goal.get_out_edges(lambda x: x.type==Edge.DERIVATION)
     
         for c,edge in childs:
-            n2 = self.string_from_goal(c)
-            n2 = str(n2)
+            out, n2 = self.add_graphviz_node(out, c)
             out.add_edge(n1, n2)
             e = out.get_edge(n1, n2)
             
             e.attr['label'] = str(edge.label)
             out = self.print_proof(out, c)
         return out
-     
     
+     
+    def add_graphviz_node(self, aGraph, node):
+        n = self.string_from_goal(node)
+        n = str(n)
+                
+        if node in self._GOALS:
+            aGraph.add_node(n, shape='ellipse')
+        else:
+            aGraph.add_node(n, shape='box')         
+        return aGraph, n        
+    
+        
     def eval(self, input): 
         proofRepr = ""
         if input[0] == 'step': 
@@ -265,7 +276,7 @@ class SequentProver:
             print 'Bye.'
             sys.exit(0)
         elif input[0] == 'print':
-            proof = pyg.AGraph()
+            proof = pyg.AGraph(center='true')
             self.print_proof(proof, self._ROOT)
             proofRepr = proof.string()
             print proofRepr
