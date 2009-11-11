@@ -9,3 +9,20 @@
 import ZSI
 import ZSI.TCcompound
 from ZSI.schema import LocalElementDeclaration, ElementDeclaration, TypeDefinition, GTD, GED
+
+##############################
+# targetNamespace
+# http://localhost:8081/HemeraService
+##############################
+
+class ns0:
+    targetNamespace = "http://localhost:8081/HemeraService"
+
+    class ArrayOfStrings_Def(ZSI.TC.Array, TypeDefinition):
+        #complexType/complexContent base="SOAP-ENC:Array"
+        schema = "http://localhost:8081/HemeraService"
+        type = (schema, "ArrayOfStrings")
+        def __init__(self, pname, ofwhat=(), extend=False, restrict=False, attributes=None, **kw):
+            ZSI.TCcompound.Array.__init__(self, None, None, pname=pname, childnames='item', undeclared=True, **kw)
+
+# end class ns0 (tns: http://localhost:8081/HemeraService)

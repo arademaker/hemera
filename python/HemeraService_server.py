@@ -92,6 +92,48 @@ class runResponse:
         self._msg =  kw.get("msg")
 runResponse.typecode = Struct(pname=("http://localhost:8081/HemeraService","runResponse"), ofwhat=[ZSI.TC.Boolean(pname="return", aname="_return", typed=False, encoded=None, minOccurs=1, maxOccurs=1, nillable=True), ZSI.TC.String(pname="proofRepr", aname="_proofRepr", typed=False, encoded=None, minOccurs=1, maxOccurs=1, nillable=True), ZSI.TC.String(pname="msg", aname="_msg", typed=False, encoded=None, minOccurs=1, maxOccurs=1, nillable=True)], pyclass=runResponse, encoded="http://localhost:8081/HemeraService")
 
+class get_rulesRequest:
+    def __init__(self, **kw):
+        """Keyword parameters:
+        id -- part id
+        goal -- part goal
+        """
+        self._id =  kw.get("id")
+        self._goal =  kw.get("goal")
+get_rulesRequest.typecode = Struct(pname=("http://localhost:8081/HemeraService","get_rules"), ofwhat=[ZSI.TC.String(pname="id", aname="_id", typed=False, encoded=None, minOccurs=1, maxOccurs=1, nillable=True), ZSI.TC.String(pname="goal", aname="_goal", typed=False, encoded=None, minOccurs=1, maxOccurs=1, nillable=True)], pyclass=get_rulesRequest, encoded="http://localhost:8081/HemeraService")
+
+class get_rulesResponse:
+    def __init__(self, **kw):
+        """Keyword parameters:
+        return -- part return
+        """
+        self._return =  kw.get("return")
+get_rulesResponse.typecode = Struct(pname=("http://localhost:8081/HemeraService","get_rulesResponse"), ofwhat=[ns0.ArrayOfStrings_Def(pname="return", aname="_return", typed=False, encoded=None, minOccurs=1, maxOccurs=1, nillable=True)], pyclass=get_rulesResponse, encoded="http://localhost:8081/HemeraService")
+
+class apply_ruleRequest:
+    def __init__(self, **kw):
+        """Keyword parameters:
+        id -- part id
+        goal -- part goal
+        ruleId -- part ruleId
+        """
+        self._id =  kw.get("id")
+        self._goal =  kw.get("goal")
+        self._ruleId =  kw.get("ruleId")
+apply_ruleRequest.typecode = Struct(pname=("http://localhost:8081/HemeraService","apply_rule"), ofwhat=[ZSI.TC.String(pname="id", aname="_id", typed=False, encoded=None, minOccurs=1, maxOccurs=1, nillable=True), ZSI.TC.String(pname="goal", aname="_goal", typed=False, encoded=None, minOccurs=1, maxOccurs=1, nillable=True), ZSI.TCnumbers.Iint(pname="ruleId", aname="_ruleId", typed=False, encoded=None, minOccurs=1, maxOccurs=1, nillable=True)], pyclass=apply_ruleRequest, encoded="http://localhost:8081/HemeraService")
+
+class apply_ruleResponse:
+    def __init__(self, **kw):
+        """Keyword parameters:
+        return -- part return
+        proofRepr -- part proofRepr
+        msg -- part msg
+        """
+        self._return =  kw.get("return")
+        self._proofRepr =  kw.get("proofRepr")
+        self._msg =  kw.get("msg")
+apply_ruleResponse.typecode = Struct(pname=("http://localhost:8081/HemeraService","apply_ruleResponse"), ofwhat=[ZSI.TC.Boolean(pname="return", aname="_return", typed=False, encoded=None, minOccurs=1, maxOccurs=1, nillable=True), ZSI.TC.String(pname="proofRepr", aname="_proofRepr", typed=False, encoded=None, minOccurs=1, maxOccurs=1, nillable=True), ZSI.TC.String(pname="msg", aname="_msg", typed=False, encoded=None, minOccurs=1, maxOccurs=1, nillable=True)], pyclass=apply_ruleResponse, encoded="http://localhost:8081/HemeraService")
+
 class proveRequest:
     def __init__(self, **kw):
         """Keyword parameters:
@@ -144,6 +186,20 @@ class HemeraService(ServiceSOAPBinding):
 
     soapAction['http://localhost:8081/HemeraService/run'] = 'soap_run'
     root[(runRequest.typecode.nspname,runRequest.typecode.pname)] = 'soap_run'
+
+    def soap_get_rules(self, ps, **kw):
+        request = ps.Parse(get_rulesRequest.typecode)
+        return request,get_rulesResponse()
+
+    soapAction['http://localhost:8081/HemeraService/get_rules'] = 'soap_get_rules'
+    root[(get_rulesRequest.typecode.nspname,get_rulesRequest.typecode.pname)] = 'soap_get_rules'
+
+    def soap_apply_rule(self, ps, **kw):
+        request = ps.Parse(apply_ruleRequest.typecode)
+        return request,apply_ruleResponse()
+
+    soapAction['http://localhost:8081/HemeraService/apply_rule'] = 'soap_apply_rule'
+    root[(apply_ruleRequest.typecode.nspname,apply_ruleRequest.typecode.pname)] = 'soap_apply_rule'
 
     def soap_prove(self, ps, **kw):
         request = ps.Parse(proveRequest.typecode)

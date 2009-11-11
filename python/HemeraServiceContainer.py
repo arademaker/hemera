@@ -45,6 +45,16 @@ class HemeraServiceContainer(HemeraService):
         response._return, response._proofRepr, response._msg = self.run(request._id)
         return request, response    
     
+    def soap_get_rules(self, ps, **kw):
+        request, response = HemeraService.soap_get_rules(self, ps, **kw)
+        response._return = self.get_rules(request._id, request._goal)
+        return request, response    
+    
+    def soap_apply_rule(self, ps, **kw):
+        request, response = HemeraService.soap_apply_rule(self, ps, **kw)
+        response._return, response._proofRepr, response._msg = self.apply_rule(request._id, request._goal, request._ruleId)
+        return request, response            
+    
     def soap_prove(self, ps, **kw):
         request, response = HemeraService.soap_prove(self, ps, **kw)
         response._return = self.prove(request._formula)
@@ -79,7 +89,22 @@ class HemeraServiceContainer(HemeraService):
     
     def run(self, id):        
         print "Running all steps of the prover process for user_id " + id
-        return self.exec_prover_cmd(id, "run")    
+        return self.exec_prover_cmd(id, "run")   
+     
+    def get_rules(self, id, goal):        
+        print "Getting applicable rules in goal " + goal + " for user_id " + id
+        prover = self.get_prover_instance(id)
+        rules = prover.get_goal_applicable_rules(goal)
+        return rules 
+
+    def apply_rule(self, id, goal, ruleId):        
+        print "Applyin rule in goal " + goal + " for user_id " + id
+        prover = self.get_prover_instance(id)
+        prover.apply_rule_to_goal(goal, ruleId)
+        
+        cmdParsed = yacc.parse("print")
+        proofRepr = prover.eval(cmdParsed)
+        return True, parseToSVG(proofRepr), prover.finalStatus              
     
     
     '''

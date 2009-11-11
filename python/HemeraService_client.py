@@ -6,7 +6,7 @@
 # 
 ##################################################
 
-
+from HemeraService_types import *
 import urlparse, types
 from ZSI.TCcompound import ComplexType, Struct
 from ZSI import client
@@ -68,6 +68,26 @@ class HemeraBindingSOAP:
         self.binding.Send(None, None, request, soapaction="http://localhost:8081/HemeraService/run", **kw)
         # no output wsaction
         response = self.binding.Receive(runResponse.typecode)
+        return response
+
+    # op: get_rules
+    def get_rules(self, request, **kw):
+        if isinstance(request, get_rulesRequest) is False:
+            raise TypeError, "%s incorrect request type" % (request.__class__)
+        # no input wsaction
+        self.binding.Send(None, None, request, soapaction="http://localhost:8081/HemeraService/get_rules", **kw)
+        # no output wsaction
+        response = self.binding.Receive(get_rulesResponse.typecode)
+        return response
+
+    # op: apply_rule
+    def apply_rule(self, request, **kw):
+        if isinstance(request, apply_ruleRequest) is False:
+            raise TypeError, "%s incorrect request type" % (request.__class__)
+        # no input wsaction
+        self.binding.Send(None, None, request, soapaction="http://localhost:8081/HemeraService/apply_rule", **kw)
+        # no output wsaction
+        response = self.binding.Receive(apply_ruleResponse.typecode)
         return response
 
     # op: prove
@@ -159,6 +179,48 @@ class runResponse:
         self._proofRepr =  kw.get("proofRepr")
         self._msg =  kw.get("msg")
 runResponse.typecode = Struct(pname=("http://localhost:8081/HemeraService","runResponse"), ofwhat=[ZSI.TC.Boolean(pname="return", aname="_return", typed=False, encoded=None, minOccurs=1, maxOccurs=1, nillable=True), ZSI.TC.String(pname="proofRepr", aname="_proofRepr", typed=False, encoded=None, minOccurs=1, maxOccurs=1, nillable=True), ZSI.TC.String(pname="msg", aname="_msg", typed=False, encoded=None, minOccurs=1, maxOccurs=1, nillable=True)], pyclass=runResponse, encoded="http://localhost:8081/HemeraService")
+
+class get_rulesRequest:
+    def __init__(self, **kw):
+        """Keyword parameters:
+        id -- part id
+        goal -- part goal
+        """
+        self._id =  kw.get("id")
+        self._goal =  kw.get("goal")
+get_rulesRequest.typecode = Struct(pname=("http://localhost:8081/HemeraService","get_rules"), ofwhat=[ZSI.TC.String(pname="id", aname="_id", typed=False, encoded=None, minOccurs=1, maxOccurs=1, nillable=True), ZSI.TC.String(pname="goal", aname="_goal", typed=False, encoded=None, minOccurs=1, maxOccurs=1, nillable=True)], pyclass=get_rulesRequest, encoded="http://localhost:8081/HemeraService")
+
+class get_rulesResponse:
+    def __init__(self, **kw):
+        """Keyword parameters:
+        return -- part return
+        """
+        self._return =  kw.get("return")
+get_rulesResponse.typecode = Struct(pname=("http://localhost:8081/HemeraService","get_rulesResponse"), ofwhat=[ns0.ArrayOfStrings_Def(pname="return", aname="_return", typed=False, encoded=None, minOccurs=1, maxOccurs=1, nillable=True)], pyclass=get_rulesResponse, encoded="http://localhost:8081/HemeraService")
+
+class apply_ruleRequest:
+    def __init__(self, **kw):
+        """Keyword parameters:
+        id -- part id
+        goal -- part goal
+        ruleId -- part ruleId
+        """
+        self._id =  kw.get("id")
+        self._goal =  kw.get("goal")
+        self._ruleId =  kw.get("ruleId")
+apply_ruleRequest.typecode = Struct(pname=("http://localhost:8081/HemeraService","apply_rule"), ofwhat=[ZSI.TC.String(pname="id", aname="_id", typed=False, encoded=None, minOccurs=1, maxOccurs=1, nillable=True), ZSI.TC.String(pname="goal", aname="_goal", typed=False, encoded=None, minOccurs=1, maxOccurs=1, nillable=True), ZSI.TCnumbers.Iint(pname="ruleId", aname="_ruleId", typed=False, encoded=None, minOccurs=1, maxOccurs=1, nillable=True)], pyclass=apply_ruleRequest, encoded="http://localhost:8081/HemeraService")
+
+class apply_ruleResponse:
+    def __init__(self, **kw):
+        """Keyword parameters:
+        return -- part return
+        proofRepr -- part proofRepr
+        msg -- part msg
+        """
+        self._return =  kw.get("return")
+        self._proofRepr =  kw.get("proofRepr")
+        self._msg =  kw.get("msg")
+apply_ruleResponse.typecode = Struct(pname=("http://localhost:8081/HemeraService","apply_ruleResponse"), ofwhat=[ZSI.TC.Boolean(pname="return", aname="_return", typed=False, encoded=None, minOccurs=1, maxOccurs=1, nillable=True), ZSI.TC.String(pname="proofRepr", aname="_proofRepr", typed=False, encoded=None, minOccurs=1, maxOccurs=1, nillable=True), ZSI.TC.String(pname="msg", aname="_msg", typed=False, encoded=None, minOccurs=1, maxOccurs=1, nillable=True)], pyclass=apply_ruleResponse, encoded="http://localhost:8081/HemeraService")
 
 class proveRequest:
     def __init__(self, **kw):

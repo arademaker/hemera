@@ -10,8 +10,11 @@ while 1:
         if not s: 
             continue
         else:
-            cmd = yacc.parse(s)
-            prover.eval(cmd)
+            if (s == 'apply'):
+                prover.get_goal_applicable_rules('(p1 --> p2), (p1 --> (p2 --> p3)), p1, (p3 --> p4) |- p4')
+            else:
+                cmd = yacc.parse(s)
+                prover.eval(cmd)
     except EOFError:
         break
     except NoMoreGoals:

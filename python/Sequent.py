@@ -8,11 +8,15 @@ class REDUCE(Exception):
     pass
 
 class SequentProver:
+    __NO_CURRENT_RULE = -1
     
     def __init__(self):
         self._ROOT = None
         self._GOALS = []
         self._GRAPH = None
+        self._currentGoal = 0
+        self._currentRule = self.__NO_CURRENT_RULE        
+        self._currentRules = []
         self.finalStatus = "" 
         
         
@@ -98,10 +102,14 @@ class SequentProver:
     def reduce_goal(self, goal):
         # construcao da lista de formulas do goal recebido e escolha da
         # formula para aplicar regra
-        lst = self.cost_formulas(goal)
-        lst.sort(key = lambda x: x[2], cmp = lambda x,y : cmp(x,y))
-        f_pair = lst.pop(0)
-    
+        if self._currentRule == self.__NO_CURRENT_RULE:
+            lst = self.cost_formulas(goal)
+            lst.sort(key = lambda x: x[2], cmp = lambda x,y : cmp(x,y))
+            f_pair = lst.pop(0)            
+        else:
+            f_pair = self._currentRules[self._currentRule]
+            
+                
         a = f_pair[0].get_childs(lambda x: x.side==Edge.LEFT)
         b = f_pair[0].get_childs(lambda x: x.side==Edge.RIGHT)
         if len(a) == 1 and len(b) == 0:
@@ -128,7 +136,7 @@ class SequentProver:
         try:
             # escolha do proximo goal a ser tentado, confirmar se lista
             # nao vazia  ATENCAO!! Talvez usar pop(0)
-            goal = goals[0]
+            goal = goals[self._currentGoal]
             pair, new_goals = self.reduce_goal(goal)
             sucess, goals = self.insert_goals(goals, new_goals)
             self.print_step(pair, goals, sucess)
@@ -253,8 +261,42 @@ class SequentProver:
             aGraph.add_node(n, shape='ellipse')
         else:
             aGraph.add_node(n, shape='box')         
-        return aGraph, n        
+        return aGraph, n
     
+    
+    def get_goal_id(self, goalStr):
+        for n, g in enumerate(self._GOALS):
+            gStr = self.string_from_goal(g)
+            if (goalStr == gStr):
+                return n 
+            
+            
+    def get_goal_applicable_rules(self, goalStr):
+        n = self.get_goal_id(goalStr)
+        if (n == None):
+            return []
+        
+        goal = self._GOALS[n]
+        
+        self._currentRules = self.cost_formulas(goal)
+        self._currentRules.sort(key = lambda x: x[2], cmp = lambda x,y : cmp(x,y))
+        
+        rules = []
+        for n, rule in enumerate(self._currentRules):
+            if (rule[2] != 4):
+                node = rule[0]
+                nodeStr = self.string_from_node(node)
+                ruleStr = nodeStr + ' ' + rule[1]
+                rules.append(ruleStr)
+            
+        return rules
+             
+    
+    def apply_rule_to_goal(self, goalStr, ruleId):
+        self._currentGoal = self.get_goal_id(goalStr)
+        self._currentRule = ruleId
+        self.step()
+
         
     def eval(self, input): 
         proofRepr = ""
