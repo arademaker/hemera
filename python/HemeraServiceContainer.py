@@ -98,9 +98,17 @@ class HemeraServiceContainer(HemeraService):
         return rules 
 
     def apply_rule(self, id, goal, ruleId):        
-        print "Applyin rule in goal " + goal + " for user_id " + id
-        prover = self.get_prover_instance(id)
-        prover.apply_rule_to_goal(goal, ruleId)
+        print "Applying rule in goal " + goal + " for user_id " + id
+        try:
+            prover = self.get_prover_instance(id)
+            prover.apply_rule_to_goal(goal, ruleId)
+        except Exception, inst:
+            msg = inst.__str__()
+            return False, "", msg 
+        else:
+            cmdParsed = yacc.parse("print")
+            proofRepr = prover.eval(cmdParsed)
+            return True, parseToSVG(proofRepr), prover.finalStatus  
         
         cmdParsed = yacc.parse("print")
         proofRepr = prover.eval(cmdParsed)
