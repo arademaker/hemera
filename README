@@ -11,10 +11,16 @@ Hemera depends on the following libraries:
 Ply: this library is easy to install, the library can be founded in
 lib subdirectory.
 
-Pygraphviz: the problem with this lib is that it is requires the
-graphviz C library. 
+Pygraphviz: in the past, it was a little bit more complicated!! But it
+seems that from now on we just need to run:
 
-For Mac OS system, we followed the procedure discribed in:
+easy_install pygraphviz
+
+
+PyGraphviz: old installation procedure
+======================================
+
+In the past, for Mac OS system we have followed the procedure discribed in:
 http://groups.google.com/group/pygraphviz-discuss/browse_thread/thread/f3b385409bb66420?pli=1
 
 The pygraphviz library in lib directory was downloaded from
@@ -29,7 +35,6 @@ location of libraries (in the beggining of the file):
 # Mac OS X (pkg from ATT)
 library_path='/usr/local/lib'
 include_path='/usr/local/include/graphviz'
-
 
 
 Pending
