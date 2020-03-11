@@ -1,6 +1,5 @@
 
-Install
-=======
+* Install
 
 Hemera depends on the following libraries:
 
@@ -16,9 +15,8 @@ seems that from now on we just need to run:
 
 easy_install pygraphviz
 
+* PyGraphviz: old installation procedure
 
-PyGraphviz: old installation procedure
-======================================
 
 In the past, for Mac OS system we have followed the procedure discribed in:
 http://groups.google.com/group/pygraphviz-discuss/browse_thread/thread/f3b385409bb66420?pli=1
@@ -37,15 +35,14 @@ library_path='/usr/local/lib'
 include_path='/usr/local/include/graphviz'
 
 
-Pending
-=======
+* Pending
+
 
 1. The initial sequent should be listed before cleaning the goals. 
 2. Improve the parser to consider cases like "a --> a --> a". 
 
 
-Making the distro
-=================
+* Making the distro
 
 python setup.py sdist
 
